@@ -7,3 +7,5 @@ def loginPage(request):
     return render(request, 'startPages/loginPage.html')
 def siginUpPage(request):
     return render(request, 'startPages/signUpPage.html')
+def planMainPage(request):
+    return render(request, 'startPages/planMainPage.html')
