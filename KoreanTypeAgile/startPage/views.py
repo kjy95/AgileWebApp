@@ -9,3 +9,5 @@ def siginUpPage(request):
     return render(request, 'startPages/signUpPage.html')
 def planMainPage(request):
     return render(request, 'startPages/planMainPage.html')
+def todoPopUp(request):
+    return render(request, 'startPages/todoPopUp.html')
