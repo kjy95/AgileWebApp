@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^signUpPage', views.siginUpPage), 
     url(r'^planMainPage', views.planMainPage), 
     url(r'^todoPopUp', views.todoPopUp), 
+    url(r'^sendTodoSubmit', views.sendTodoSubmit), 
 ]

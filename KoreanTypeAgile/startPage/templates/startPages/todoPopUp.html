@@ -27,18 +27,22 @@
         <header>
             <h1>Todo</h1>
         </header>
-        <div>projectName</div> 
-        <input type="text" name="projectName" id = text></input> 
-        
-        <div>startDate</div> 
-        <input type="text" name="startDate" id = text></input> 
-        
-        <div>endDate</div> 
-        <input type="text" name="endDate"  id = text></input> 
-        
-        <div>contents</div>
-        <textarea name="contents" id = textField> </textarea>
-        
-        <button type = "submit" name="submit" id = button>submit</button>
+
+        <form class="" action="sendTodoSubmit" method="post">
+            <div>projectName</div> 
+            <input type="text" name="projectName" id = text></input> 
+            
+            <div>startDate</div> 
+            <input type="datetime-local" name="startDate" id = text></input> 
+            
+            <div>endDate</div> 
+            <input type="datetime-local" name="endDate"  id = text></input> 
+            
+            <div>contents</div>
+            <textarea name="contents" id = textField> </textarea>
+            {% csrf_token %}
+            <button type = "submit" name="submit" id = button>submit</button>
+        </form>
+    
     </body>
 </html>

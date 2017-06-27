@@ -2,6 +2,10 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <style>
             #planDivision {
                 border: black 1px solid;
@@ -17,7 +21,7 @@
         <header>
             <h1><a href="/">For your brilliant plan.</a></h1>
         </header>
-
+ <!--javascript시작 html코드(todopopup)--동기화 기능알고 다시 보기
     <script language="javascript" type="text/javascript">
 
     function popitup(url) {
@@ -31,7 +35,31 @@
        <nav>
              <a href="" onclick="return popitup('todoPopUp.html')" id="planDivision">todo</a> <a href="" id="planDivision">doing</a> <a href="" id="planDivision">done</a>
        </nav>
+-->
+    <nav>
+             <a href="todoPopUp" id="planDivision">todo</a> <a href="" id="planDivision">doing</a> <a href="" id="planDivision">done</a>
+    </nav>
+   
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <td><B>project name</B></td>
+            <td><B>start date</B></td>
+            <td><B>end date</B></td>
+            <td><B>contents</B></td>
+        </tr>
+        </thead>
+        <tbody>
+          {% for todo in todos %}
+        <tr>
+            <td> {{todo.todoName}}</td>
+            <td> {{todo.startDate}} </td>
+            <td> {{todo.endDate}} </td>
+            <td> {{todo.todoContents}} </td>
+        </tr>
+          {% endfor %}
+        </tbody>
 
-
+    </table>
     </body>
 </html>
