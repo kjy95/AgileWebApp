@@ -15,6 +15,18 @@
             header h1{  
                 margin: 60px;
             } 
+            #todoTable {
+            border: black 1px solid;
+            padding: 15px;
+            margin: 70px;
+            }
+            td {
+            border: black 1px solid;
+            padding: 5px;
+            }   
+           #check {
+                padding: 10px;
+            }
         </style>
     </head>
     <body id = "body">
@@ -40,13 +52,15 @@
              <a href="todoPopUp" id="planDivision">todo</a> <a href="" id="planDivision">doing</a> <a href="" id="planDivision">done</a>
     </nav>
    
-        <table class="table table-striped">
+   {% if todos %}
+        <table id = "todoTable">
         <thead>
         <tr>
-            <td><B>project name</B></td>
-            <td><B>start date</B></td>
-            <td><B>end date</B></td>
+            <td><B>PJ name</B></td>
+            <td><B>start</B></td>
+            <td><B>end</B></td>
             <td><B>contents</B></td>
+            <td><B>check</B></td>
         </tr>
         </thead>
         <tbody>
@@ -56,10 +70,12 @@
             <td> {{todo.startDate}} </td>
             <td> {{todo.endDate}} </td>
             <td> {{todo.todoContents}} </td>
+            <td id = "check">  <input type = "checkbox"></input> </td>
         </tr>
           {% endfor %}
         </tbody>
 
     </table>
+   {% endif %}
     </body>
 </html>
