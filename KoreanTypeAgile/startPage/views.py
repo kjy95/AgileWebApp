@@ -4,7 +4,9 @@ import datetime
 from .models import User, Todo
 
 def index(request): 
-    return render(request, 'startPages/index.html')
+    return render(request, 'startPages/index.html')  
+def cssBootstrap(request):
+    return render(request, 'startPages/css/bootstrap.min.css')
 def loginPage(request):
     return render(request, 'startPages/loginPage.html')
 def siginUpPage(request):

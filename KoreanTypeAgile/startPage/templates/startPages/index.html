@@ -1,25 +1,24 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <!--style css link추가 <link rel="stylesheet" type="text/css" href="http://localhost/css/style.css?ver=1"> -->
-        </head>
-    <!--id = "body"로 설정 후 아래 버튼에서 사용함-->
-    <body id = "body">
-        <header>
-            <h1><a href="/">For your brilliant plan.</a></h1>
-        </header>
-        <nav>
-            <ol>
-                <li><a href="loginPage">login</a>/<a href="signUpPage">회원가입</a></li>
-                <li><a href="planMainPage">plan</a></li>
-                <li><a href="">other</a></li>
-            </ol>
-        </nav>
-         
-        <article>
-            <h2>Our site</h2>
-            There is the site which hope for your brilliant paln.
-        </article>
-    </body>
-</html>
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container">
+     <div>   
+        ID<input type="text" name="userId"></input> 
+        PW<input type="text" name="userPassword"></input> 
+        <input type = "button" value="LOGIN" onclick="alert('//todo')" window.location.href="//todo"/> 
+    </div>
+        <input type = "button" value="SIGNUP"  window.location.href="signUpPage"/> 
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Our site</h1>
+                <p>There is the site which hope for your brilliant paln.</p>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+        <div class="entry">
+        <h1 class="title"><a href="#">큰 제목</a></h1>
+    </div>
+{% endblock content %}
