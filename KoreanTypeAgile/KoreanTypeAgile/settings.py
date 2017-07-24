@@ -76,10 +76,15 @@ WSGI_APPLICATION = 'KoreanTypeAgile.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',#postgresql
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),#프로젝트이름 
+        'ENGINE': 'django.db.backends.postgresql',#postgresql
+        'NAME': 'KoreanTypeAgile',#프로젝트이름
+        'USER': 'postgres',
+        'PASSWORD': '123456789',#개인 비번
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
+
 
 
 

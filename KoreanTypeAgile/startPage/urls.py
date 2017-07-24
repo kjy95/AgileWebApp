@@ -8,5 +8,4 @@ urlpatterns = [
     url(r'^planMainPage', views.planMainPage), 
     url(r'^todoPopUp', views.todoPopUp), 
     url(r'^sendTodoSubmit', views.sendTodoSubmit),
-    url(r'^todoPopUp', views.cssBootstrap), 
 ]
