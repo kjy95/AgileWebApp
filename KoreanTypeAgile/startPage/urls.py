@@ -8,4 +8,7 @@ urlpatterns = [
     url(r'^planMainPage', views.planMainPage), 
     url(r'^todoPopUp', views.todoPopUp), 
     url(r'^sendTodoSubmit', views.sendTodoSubmit),
+    url(r'^main_page', views.main_page),
+    url(r'^profile', views.profile),
+    url(r'^search', views.search),
 ]

@@ -100,3 +100,10 @@ def sendTodoSubmit(request):
     todos = Todo.objects.all()
     context = {'todos' : todos}
     return render(request, 'startPages/planMainPage.html', context)
+
+def main_page(request):
+    return render(request, 'startPages/main_page.html')  
+def profile(request):
+    return render(request, 'startPages/profile.html')  
+def search(request):
+    return render(request, 'startPages/search.html')  
