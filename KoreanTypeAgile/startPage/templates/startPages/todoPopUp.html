@@ -1,34 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <style> 
-            #textField{  
-                padding: 15px;
-                margin: 10px;
-                height:420px;
-                width:200px;
-            } 
-             #text{  
-                padding: 15px;
-                margin: 10px; 
-                width:200px;
-                height:5px;
-            } 
-            #button{  
-                padding: 5px;
-                margin: 0px; 
-               transform: translate(190px, 0px);
-                
-            }
-        </style>
-    </head>
-    <body id = "body">
-        <header>
-            <h1>Todo</h1>
-        </header>
 
-        <form class="" action="sendTodoSubmit" method="post">
+{% extends "logged_in_page_base.html" %}
+
+{% block content %}
+
+   <h1>Todo</h1>
+    <h1>Our site-profile page</h1>
+    <p>There is the site which hope for your brilliant paln.</p>
+    <form class="" action="sendTodoSubmit" method="post">
             <div>projectName</div> 
             <input type="text" name="projectName" id = text></input> 
             
@@ -44,5 +22,4 @@
             <button type = "" name="submit" id = button>submit</button>
         </form>
     
-    </body>
-</html>
+{% endblock content %}

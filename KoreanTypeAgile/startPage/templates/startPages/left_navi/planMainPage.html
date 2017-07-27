@@ -1,0 +1,34 @@
+{% extends "logged_in_page_base.html" %}
+
+{% block content %}
+    <nav>
+             <a href="todoPopUp" id="planDivision">todo</a> <a href="" id="planDivision">doing</a> <a href="" id="planDivision">done</a>
+    </nav>
+   
+   {% if todos %}
+        <table id = "todoTable">
+        <thead>
+        <tr>
+            <td><B>PJ name</B></td>
+            <td><B>start</B></td>
+            <td><B>end</B></td>
+            <td><B>contents</B></td>
+            <td><B>check</B></td>
+        </tr>
+        </thead>
+        <tbody>
+          {% for todo in todos %}
+        <tr>
+            <td> {{todo.todoName}}</td>
+            <td> {{todo.startDate}} </td>
+            <td> {{todo.endDate}} </td>
+            <td> {{todo.todoContents}} </td>
+            <td id = "check">  <input type = "checkbox"></input> </td>
+        </tr>
+          {% endfor %}
+        </tbody>
+
+    </table>
+   {% endif %}
+    
+{% endblock content %}

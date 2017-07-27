@@ -14,14 +14,17 @@ def siginUpPage(request):
 def planMainPage(request):
     todos = Todo.objects.all()
     context = {'todos' : todos}
-    return render(request, 'startPages/planMainPage.html', context)
+    return render(request, 'startPages/left_navi/planMainPage.html', context)
 def todoPopUp(request):
     return render(request, 'startPages/todoPopUp.html')
 def todoSaveForm(todoName, todoContents, startDate, endDate):
-    todo = Todo(todoName = todoName,
+    todo = Todo(
+                project_name = '',
+                todoName = todoName,
                 todoContents = todoContents,
                 startDate = startDate,
                 endDate = endDate)
+                
                         
     todo.save()
 def sendTodoSubmit(request):
@@ -101,9 +104,21 @@ def sendTodoSubmit(request):
     context = {'todos' : todos}
     return render(request, 'startPages/planMainPage.html', context)
 
-def main_page(request):
-    return render(request, 'startPages/main_page.html')  
+def homepage(request):
+    return render(request, 'startPages/top_navi/homepage.html')    
 def profile(request):
-    return render(request, 'startPages/profile.html')  
+    return render(request, 'startPages/top_navi/profile.html')  
 def search(request):
-    return render(request, 'startPages/search.html')  
+    return render(request, 'startPages/left_navi/search.html')    
+def timeline(request):
+    return render(request, 'startPages/left_navi/timeline.html')    
+def backlog(request):
+    return render(request, 'startPages/left_navi/backlog.html')    
+def kanban(request):
+    return render(request, 'startPages/left_navi/kanban.html')    
+def issues(request):
+    return render(request, 'startPages/left_navi/issues.html')    
+def wiki(request):
+    return render(request, 'startPages/left_navi/wiki.html')    
+def team(request):
+    return render(request, 'startPages/left_navi/team.html')    
