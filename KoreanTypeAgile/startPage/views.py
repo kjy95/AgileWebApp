@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-import datetime
+from django.contrib import messages
 from .models import User, Todo, Project
-
+import datetime
 
 def index(request): 
-
     return render(request, 'startPages/index.html')  
 def cssBootstrap(request):
     return render(request, 'startPages/css/bootstrap.min.css')
@@ -164,32 +163,22 @@ def Signin(request):
     try:
         input_email = request.POST['email']
     except:
-        input_email=False
-    #email=request.POST.get('email',False)
+        input_email=None
     input_password=request.POST.get('password',None)
-    #try:
     check_email=User.objects.filter(email=input_email).exists()
-    print(input_email)
-    check_password=User.objects.filter(password=input_password).exists()
-    #except User.DoesNotExist :
-    #    check_email = False
-    #    check_password = False
     if check_email is True :
-        return HttpResponse("로그인 성공")
-    elif check_email is False :
-        return HttpResponse("로그인 실패")
-    else : 
-        return HttpResponse("True False 둘 다 아닌")
-    #user = authenticate(email=input_email,password=input_password)
-    """
-    if user is not None :
-        login(request,user)
-        return render(request,'startPages/index.html')
-    elif user is None :
-        return HttpResponse("로그인 실패") 
-    else :
-        return HttpResponse("무슨 오류죠 이건")
-    """
-
-
+        check_password=User.objects.filter(email=input_email,password=input_password).exists()
+        if check_password is True :
+            userdatas={'email' :input_email,'password':input_password}
+            return render(request,'startPages/top_navi/homepage.html',userdatas)
+        elif check_password is False :
+            messages.error(request,"비밀번호가 일치하지 않습니다.")
+            userdatas={'email' :input_email,'password':input_password}
+            return render(request,'startPages/index.html',userdatas)
+    elif check_email is False: 
+        messages.error(request,"존재하지 않는 이메일 입니다.")
+        userdatas={'email' :input_email,'password':input_password}
+        return render(request,'startPages/index.html',userdatas)
+   
+    
 
