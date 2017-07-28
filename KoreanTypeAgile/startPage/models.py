@@ -7,7 +7,7 @@ class User(models.Model):
     project = models.CharField(max_length=40, default='')
 
     def __str__(self):
-        return self.userId
+        return self.name
 
  
 

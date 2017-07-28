@@ -1,15 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 import datetime
 from .models import User, Todo
 
+
 def index(request): 
+
     return render(request, 'startPages/index.html')  
 def cssBootstrap(request):
     return render(request, 'startPages/css/bootstrap.min.css')
 def loginPage(request):
     return render(request, 'startPages/loginPage.html')
-def siginUpPage(request):
+def signUpPage(request):
     return render(request, 'startPages/signUpPage.html')
 def planMainPage(request):
     todos = Todo.objects.all()
@@ -18,13 +22,10 @@ def planMainPage(request):
 def todoPopUp(request):
     return render(request, 'startPages/todoPopUp.html')
 def todoSaveForm(todoName, todoContents, startDate, endDate):
-    todo = Todo(
-                project_name = '',
-                todoName = todoName,
+    todo = Todo(todoName = todoName,
                 todoContents = todoContents,
                 startDate = startDate,
                 endDate = endDate)
-                
                         
     todo.save()
 def sendTodoSubmit(request):
@@ -104,21 +105,50 @@ def sendTodoSubmit(request):
     context = {'todos' : todos}
     return render(request, 'startPages/planMainPage.html', context)
 
-def homepage(request):
-    return render(request, 'startPages/top_navi/homepage.html')    
-def profile(request):
-    return render(request, 'startPages/top_navi/profile.html')  
-def search(request):
-    return render(request, 'startPages/left_navi/search.html')    
-def timeline(request):
-    return render(request, 'startPages/left_navi/timeline.html')    
-def backlog(request):
-    return render(request, 'startPages/left_navi/backlog.html')    
-def kanban(request):
-    return render(request, 'startPages/left_navi/kanban.html')    
-def issues(request):
-    return render(request, 'startPages/left_navi/issues.html')    
-def wiki(request):
-    return render(request, 'startPages/left_navi/wiki.html')    
-def team(request):
-    return render(request, 'startPages/left_navi/team.html')    
+
+def Signup(request) :
+    name=request.POST['name']
+    email=request.POST['email']
+    password=request.POST['password']
+    try:
+        userdata=User.objects.get(name = name,email = email, password=password)
+        userdata.save()
+    except:
+        userdata=User(name=name,email=email,password=password)
+        userdata.save()
+        userdatas=User.objects.all()
+        userdatas={'userdatas':userdatas}
+        return render(request, 'startPages/index.html', userdatas)
+    userdatas=User.objects.all()
+    userdatas={'userdatas':userdatas}
+    return render(request,'startPages/index.html',userdatas)
+
+def Signin(request):
+    
+    input_email = request.POST.get('email',None)
+    #email=request.POST.get('email',False)
+    input_password=request.POST.get('password',None)
+    try:
+        check_email=User.objects.filter(email=input_email)
+        check_password=User.objects.filter(password=input_password)
+    except User.DoesNotExist :
+        check_email = None
+        check_password = None
+    if check_email is not None :
+        return HttpResponse("로그인 성공")
+    else :
+        return HttpResponse("로그인 실패")
+    #user = authenticate(email=input_email,password=input_password)
+    """
+    if user is not None :
+        login(request,user)
+        return render(request,'startPages/index.html')
+    elif user is None :
+        return HttpResponse("로그인 실패") 
+    else :
+        return HttpResponse("무슨 오류죠 이건")
+    """
+
+
+
+
