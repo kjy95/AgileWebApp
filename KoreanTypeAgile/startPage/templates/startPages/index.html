@@ -4,6 +4,8 @@
 
     <div class="entry">
         <div class="container">
+           <form class="" action="Signin" method="post">
+              {% csrf_token %}
              <div style = "width: 600px; height: 500px; margin: 200px auto;">   
               <form class="form-inline">
               <div class="form-group">
@@ -32,4 +34,20 @@
     
         <h1 class="title"><a href="#">큰 제</a></h1>
     </div>
+    <script type="text/javascript">
+      function check_blank(){
+        var input_email=document.getElementById("exampleInputEmail3").value;
+        var input_password=document.getElementById("exampleInputPassword3").value;
+        if(input_email == "" && input_password == ""){
+          alert("이메일과 패스워드를 입력해주세요"); return false;
+        }else if(input_email == "" ){
+          alert("이메일을 입력해주세요 "); return false;
+        }else if(input_password == ""){
+          alert("패스워드를 입력해주세요 "); return false;
+        }
+      }
+    </script>
+      </form>
+    
+
 {% endblock content %}
