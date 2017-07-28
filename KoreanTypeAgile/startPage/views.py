@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import datetime
-from .models import User, Todo
+from .models import User, Todo, Project
 
 def index(request): 
     return render(request, 'startPages/index.html')  
@@ -27,6 +27,21 @@ def todoSaveForm(todoName, todoContents, startDate, endDate):
                 
                         
     todo.save()
+
+def send_project_submit(request):
+    big_project_name = request.POST.get('big_project_name', False)
+    project_contents = request.POST['project_contents']
+    project_member = request.POST['project_member']
+    project = Project(
+                big_project_name = big_project_name,
+                project_contents = project_contents,
+                project_member = project_member)
+                
+                        
+    project.save()
+    projects = Project.objects.all()
+    context = {'projects' : projects}
+    return render(request, 'startPages/top_navi/homepage.html', context)
 def sendTodoSubmit(request):
     projectName = request.POST['projectName']
     contents = request.POST['contents']
@@ -104,10 +119,14 @@ def sendTodoSubmit(request):
     context = {'todos' : todos}
     return render(request, 'startPages/planMainPage.html', context)
 
-def homepage(request):
-    return render(request, 'startPages/top_navi/homepage.html')    
+def homepage(request):  
+    projects = Project.objects.all()
+    context = {'projects' : projects}
+    return render(request, 'startPages/top_navi/homepage.html', context)
 def profile(request):
     return render(request, 'startPages/top_navi/profile.html')  
+def create_project(request):
+    return render(request, 'startPages/top_navi/create_project.html')    
 def search(request):
     return render(request, 'startPages/left_navi/search.html')    
 def timeline(request):
@@ -122,3 +141,4 @@ def wiki(request):
     return render(request, 'startPages/left_navi/wiki.html')    
 def team(request):
     return render(request, 'startPages/left_navi/team.html')    
+    

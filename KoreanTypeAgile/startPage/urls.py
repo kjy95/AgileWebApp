@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^planMainPage', views.planMainPage), 
     url(r'^todoPopUp', views.todoPopUp), 
     url(r'^sendTodoSubmit', views.sendTodoSubmit),
+    url(r'^send_project_submit', views.send_project_submit),
     url(r'^profile', views.profile),
     url(r'^search', views.search),
     url(r'^timeline', views.timeline),
@@ -17,4 +18,5 @@ urlpatterns = [
     url(r'^wiki', views.wiki),
     url(r'^team', views.team),
     url(r'^homepage', views.homepage),
+    url(r'^create_project', views.create_project),
 ]
