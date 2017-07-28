@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 import datetime
 from .models import User, Todo, Project
 
@@ -162,20 +161,25 @@ def Signup(request) :
     return render(request,'startPages/index.html',userdatas)
 
 def Signin(request):
-    
-    input_email = request.POST.get('email',None)
+    try:
+        input_email = request.POST['email']
+    except:
+        input_email=False
     #email=request.POST.get('email',False)
     input_password=request.POST.get('password',None)
-    try:
-        check_email=User.objects.filter(email=input_email)
-        check_password=User.objects.filter(password=input_password)
-    except User.DoesNotExist :
-        check_email = None
-        check_password = None
-    if check_email is not None :
+    #try:
+    check_email=User.objects.filter(email=input_email).exists()
+    print(input_email)
+    check_password=User.objects.filter(password=input_password).exists()
+    #except User.DoesNotExist :
+    #    check_email = False
+    #    check_password = False
+    if check_email is True :
         return HttpResponse("로그인 성공")
-    else :
+    elif check_email is False :
         return HttpResponse("로그인 실패")
+    else : 
+        return HttpResponse("True False 둘 다 아닌")
     #user = authenticate(email=input_email,password=input_password)
     """
     if user is not None :
