@@ -4,9 +4,10 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index), 
     url(r'^loginPage', views.loginPage), 
-    url(r'^signUpPage', views.siginUpPage), 
-    url(r'^planMainPage', views.planMainPage), 
-    url(r'^todoPopUp', views.todoPopUp), 
+    url(r'^signUpPage', views.signUpPage), 
+    url(r'^Signin', views.Signin),
+    url(r'^planMainPage', views.planMainPage),
+    url(r'^todoPopUp', views.todoPopUp),
     url(r'^sendTodoSubmit', views.sendTodoSubmit),
     url(r'^send_project_submit', views.send_project_submit),
     url(r'^profile', views.profile),
@@ -19,4 +20,5 @@ urlpatterns = [
     url(r'^team', views.team),
     url(r'^homepage', views.homepage),
     url(r'^create_project', views.create_project),
+    url(r'^Signup',views.Signup)
 ]
