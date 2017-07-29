@@ -8,8 +8,6 @@ from .models import User, Todo, Project
 def index(request): 
 
     return render(request, 'startPages/index.html')  
-def cssBootstrap(request):
-    return render(request, 'startPages/css/bootstrap.min.css')
 def loginPage(request):
     return render(request, 'startPages/loginPage.html')
 def signUpPage(request):
@@ -134,7 +132,9 @@ def timeline(request):
 def backlog(request):
     return render(request, 'startPages/left_navi/backlog.html')    
 def kanban(request):
-    return render(request, 'startPages/left_navi/kanban.html')    
+    todos = Todo.objects.all()
+    context = {'todos' : todos} 
+    return render(request, 'startPages/left_navi/kanban.html', context)    
 def issues(request):
     return render(request, 'startPages/left_navi/issues.html')    
 def wiki(request):
@@ -169,7 +169,10 @@ def Signin(request):
     input_password=request.POST.get('password',None)
     #try:
     check_email=User.objects.filter(email=input_email).exists()
-    print(input_email)
+    print("########")
+    print(input_password)
+    print("########")
+    print(request.POST['email'])
     check_password=User.objects.filter(password=input_password).exists()
     #except User.DoesNotExist :
     #    check_email = False
