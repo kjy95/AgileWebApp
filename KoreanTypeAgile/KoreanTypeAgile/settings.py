@@ -44,9 +44,6 @@ INSTALLED_APPS = [
     'django_messages',
     'startPage',
 ]
-AUTHENTICATION_BACKENDS = (
-        'django.contrib.auth.backends.ModelBackend',
-    )
 
 MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
