@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import User, Todo, Project
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 import datetime
 
 def index(request): 
     return render(request, 'startPages/index.html')  
-def cssBootstrap(request):
-    return render(request, 'startPages/css/bootstrap.min.css')
 def loginPage(request):
     return render(request, 'startPages/loginPage.html')
 def signUpPage(request):
@@ -26,7 +28,7 @@ def todoSaveForm(todoName, todoContents, startDate, endDate):
                 endDate = endDate)
                         
     todo.save()
-
+    
 def send_project_submit(request):
     big_project_name = request.POST.get('big_project_name', False)
     project_contents = request.POST['project_contents']
@@ -118,12 +120,23 @@ def sendTodoSubmit(request):
     context = {'todos' : todos}
     return render(request, 'startPages/planMainPage.html', context)
 
-def homepage(request):  
+def homepage(request):
     projects = Project.objects.all()
     context = {'projects' : projects}
     return render(request, 'startPages/top_navi/homepage.html', context)
 def profile(request):
-    return render(request, 'startPages/top_navi/profile.html')  
+    userid=request.session['userid']
+    userinfo=User.objects.filter(email=userid).values('name','email','project')
+    userinfo_list = [entry for entry in userinfo]
+    userinfo_dict = {item['name']:item for item in userinfo_list}
+    '''
+    userinfo_dict={}
+    for user in userinfo_list:
+        name = user.pop('name')
+        userinfo_dict[name] = user
+    '''
+    print(userinfo_dict)
+    return render(request, 'startPages/top_navi/profile.html',userinfo_dict)  
 def create_project(request):
     return render(request, 'startPages/top_navi/create_project.html')    
 def search(request):
@@ -133,7 +146,9 @@ def timeline(request):
 def backlog(request):
     return render(request, 'startPages/left_navi/backlog.html')    
 def kanban(request):
-    return render(request, 'startPages/left_navi/kanban.html')    
+    todos = Todo.objects.all()
+    context = {'todos' : todos} 
+    return render(request, 'startPages/left_navi/kanban.html', context)    
 def issues(request):
     return render(request, 'startPages/left_navi/issues.html')    
 def wiki(request):
@@ -146,39 +161,45 @@ def Signup(request) :
     name=request.POST['name']
     email=request.POST['email']
     password=request.POST['password']
+    
     try:
         userdata=User.objects.get(name = name,email = email, password=password)
-        userdata.save()
     except:
-        userdata=User(name=name,email=email,password=password)
+        userdata=User(name = name,email = email,password = password)
+    
+    if User.objects.filter(email=email).exists() is False :
         userdata.save()
-        userdatas=User.objects.all()
-        userdatas={'userdatas':userdatas}
-        return render(request, 'startPages/index.html', userdatas)
+    
     userdatas=User.objects.all()
     userdatas={'userdatas':userdatas}
+    
+    if User.objects.filter(email=email).exists() :
+        messages.error(request,"이미 존재하는 이메일 입니다.")
+        return render(request,'startPages/signUpPage.html',userdatas) 
     return render(request,'startPages/index.html',userdatas)
 
 def Signin(request):
-    try:
-        input_email = request.POST['email']
-    except:
-        input_email=None
+    input_email = request.POST.get('email',None)
     input_password=request.POST.get('password',None)
     check_email=User.objects.filter(email=input_email).exists()
+    
     if check_email is True :
         check_password=User.objects.filter(email=input_email,password=input_password).exists()
+        
         if check_password is True :
+            request.session['userid']=input_email
             userdatas={'email' :input_email,'password':input_password}
             return render(request,'startPages/top_navi/homepage.html',userdatas)
+        
         elif check_password is False :
             messages.error(request,"비밀번호가 일치하지 않습니다.")
-            userdatas={'email' :input_email,'password':input_password}
-            return render(request,'startPages/index.html',userdatas)
+   
     elif check_email is False: 
         messages.error(request,"존재하지 않는 이메일 입니다.")
-        userdatas={'email' :input_email,'password':input_password}
-        return render(request,'startPages/index.html',userdatas)
+    
+    userdatas={'email' :input_email,'password':input_password}   
+    return render(request,'startPages/index.html',userdatas)
+   
    
     
 
