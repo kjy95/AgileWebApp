@@ -193,6 +193,7 @@ def Signin(request):
     userdatas={'email' :input_email,'password':input_password}   
     return render(request,'startPages/index.html',userdatas)
    
-   
-    
+def brain_stroming(request):
+    return render(request,'startPages/left_navi/brain_stroming.html')
 
+    
