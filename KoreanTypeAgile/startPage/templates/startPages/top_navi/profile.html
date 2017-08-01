@@ -2,28 +2,55 @@
 
 {% block content %}
 
-   
-    <h1>homepage </h1>
-    <p>There is the site which hope for your brilliant paln.</p>
        
-   {% if userinfo %}
+   {% if name and email %}
+        <style>
+            #profile_picture{
+                padding:150px;
+                float:left;
+                margin-left:-200px;
+                padding-top:100px;
+            }
+            #name{
+                font-size:20px;
+                font-weight:bold;
+                padding-top:90px;
+            }
+            #email{
+                font-size:20px;
+                font-weight:bold;
+                padding-top:30px;
+            }
+            
+        </style>
+        <img src="http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/default_images/profileIcon_1.png" alt="avatar" class="img-circle" id="profile_picture">
+        
+        <div id="content">
+            <p id="name">Name</p>
+            <p id="name_value">{{name}}</p>
+            <p id="email">Email</p>
+            <p id="email_value>">{{email}}</p>
+        </div>
+        <!--
         <table class="table table-bordered" id = "Profile_Table">
         <thead>
         <tr>
             <td><B>name</B></td> 
             <td><B>email</B></td>
+            <td><B>Projects</B></td>
         </tr>
         </thead>
         <tbody>
-          {% for user in userinfo %}
         <tr>
-            <td><a href = "planMainPage"> {{User.name}}</a></td>
-            <td> {{User.email}} </td>
+            <td><a href = "planMainPage"> {{name}}</a></td>
+            <td> {{email}} </td>
+            <td> {{project}}</td>
         </tr>
-          {% endfor %}
         </tbody>
 
     </table>
+    -->
+        
    {% endif %}
     
 {% endblock content %}
