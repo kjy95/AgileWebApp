@@ -1,10 +1,6 @@
 {% extends "logged_in_page_base.html" %}
 
 {% block content %}
-    <nav>
-             <a href="todoPopUp" id="planDivision">todo</a> <a href="" id="planDivision">doing</a> <a href="" id="planDivision">done</a>
-    </nav>
-   
    {% if todos %}
         <table class="table table-bordered" id = "todoTable">
         <thead>
@@ -30,5 +26,6 @@
 
     </table>
    {% endif %}
-    
+    <a href="todoPopUp" class="btn btn-info" id="planDivision">Create Todo</a> 
+   
 {% endblock content %}
