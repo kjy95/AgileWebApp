@@ -124,14 +124,11 @@ def profile(request):
     userid=request.session['userid']
     userinfo=User.objects.filter(email=userid).values('name','email','project')
     userinfo_list = [entry for entry in userinfo]
-    userinfo_dict = {item['name']:item for item in userinfo_list}
-    '''
     userinfo_dict={}
     for user in userinfo_list:
-        name = user.pop('name')
-        userinfo_dict[name] = user
-    '''
-    print(userinfo_dict)
+        for items in user :
+           value=user[items]
+           userinfo_dict[items]=value
     return render(request, 'startPages/top_navi/profile.html',userinfo_dict)  
 def create_project(request):
     return render(request, 'startPages/top_navi/create_project.html')    
