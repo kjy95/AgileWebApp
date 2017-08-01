@@ -3,7 +3,27 @@
 {% block content %}
 
    
-    <h1>Our site-profile page</h1>
+    <h1>homepage </h1>
     <p>There is the site which hope for your brilliant paln.</p>
+       
+   {% if userinfo %}
+        <table class="table table-bordered" id = "Profile_Table">
+        <thead>
+        <tr>
+            <td><B>name</B></td> 
+            <td><B>email</B></td>
+        </tr>
+        </thead>
+        <tbody>
+          {% for user in userinfo %}
+        <tr>
+            <td><a href = "planMainPage"> {{User.name}}</a></td>
+            <td> {{User.email}} </td>
+        </tr>
+          {% endfor %}
+        </tbody>
+
+    </table>
+   {% endif %}
     
 {% endblock content %}

@@ -9,6 +9,9 @@
          <div style = "width: 600px; height: 500px; margin: 200px auto;">   
     <form class="" action="Signup" method="post">
       {% csrf_token %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
       <div class="form-group">
         <label for="exampleInputName1" style="color:#92B3B7">Name</label>
         <input type="text" class="form-control" id="exampleInputName1" placeholder="Name" name="name">
