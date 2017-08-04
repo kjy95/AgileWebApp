@@ -12,7 +12,7 @@ class User(models.Model):
  
 
 class Project(models.Model):
-    big_project_name = models.CharField(max_length=40, default='')
+    project_name = models.CharField(max_length=40, default='')
     project_member = models.CharField(max_length=40, default='')
     project_contents = models.CharField(max_length=40, default='')
 
