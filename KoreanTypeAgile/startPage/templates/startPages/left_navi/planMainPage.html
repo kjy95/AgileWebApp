@@ -1,25 +1,27 @@
 {% extends "logged_in_page_base.html" %}
 
 {% block content %}
+
+    <h1>Backlog</h1> 
    {% if todos %}
         <table class="table table-bordered" id = "todoTable">
         <thead>
         <tr>
-            <td><B>PJ name</B></td>
+            <td><B>Plan title</B></td>
+            <td><B>contents</B></td>
             <td><B>start</B></td>
             <td><B>end</B></td>
-            <td><B>contents</B></td>
-            <td><B>check</B></td>
+            <td><B>status</B></td>
         </tr>
         </thead>
         <tbody>
           {% for todo in todos %}
         <tr>
             <td> {{todo.todoName}}</td>
+            <td> {{todo.todoContents}} </td>
             <td> {{todo.startDate}} </td>
             <td> {{todo.endDate}} </td>
-            <td> {{todo.todoContents}} </td>
-            <td id = "check">  <input type = "checkbox"></input> </td>
+            <td> {{todo.get_status}} </td>
         </tr>
           {% endfor %}
         </tbody>

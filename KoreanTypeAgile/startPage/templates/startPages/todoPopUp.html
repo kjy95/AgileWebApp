@@ -3,23 +3,24 @@
 
 {% block content %}
 
-   <h1>Todo</h1>
-    <h1>Our site-profile page</h1>
-    <p>There is the site which hope for your brilliant paln.</p>
+    <h1>Add Plan</h1> 
     <form class="" action="sendTodoSubmit" method="post">
-            <div>projectName</div> 
-            <input type="text" name="projectName" id = text></input> 
+            {% if todos %}
+            <div>plan title</div> 
+            {% endif %}
+            <div>plan title</div> 
+            <input type="text" class="form-control" name="projectName" id = text></input> 
             
             <div>startDate</div> 
-            <input type="datetime-local" name="startDate" id = text></input> 
+            <input type="datetime-local" class="form-control" name="startDate" id = text></input> 
             
             <div>endDate</div> 
-            <input type="datetime-local" name="endDate"  id = text></input> 
+            <input type="datetime-local" class="form-control" name="endDate"  id = text></input> 
             
             <div>contents</div>
-            <textarea name="contents" id = textField> </textarea>
+            <textarea name="contents" class="form-control" rows="10" id = textField> </textarea>
             {% csrf_token %}
-            <button type = "" name="submit" id = button>submit</button>
+            <button type = "" class="btn btn-info" name="submit" id = button>submit</button>
         </form>
     
 {% endblock content %}
