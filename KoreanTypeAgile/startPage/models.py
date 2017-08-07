@@ -1,5 +1,7 @@
 from django.db import models
 # Create your models here.
+
+
 class User(models.Model):
     name = models.CharField(max_length=20)
     email = models.CharField(max_length=40)
@@ -12,7 +14,7 @@ class User(models.Model):
  
 
 class Project(models.Model):
-    big_project_name = models.CharField(max_length=40, default='')
+    project_name = models.CharField(max_length=40, default='')
     project_member = models.CharField(max_length=40, default='')
     project_contents = models.CharField(max_length=40, default='')
 
@@ -64,3 +66,12 @@ class Issue(models.Model):
     issue_contents = models.CharField(max_length=40)
     person_created = models.CharField(max_length=40)
     commit = models.CharField(max_length=40)
+
+    
+class Brainstorm(models.Model):
+    project_name=models.CharField(max_length=40)
+    ideas=models.TextField()
+    def __str__(self):
+        return self.project_name
+
+

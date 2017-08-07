@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^homepage', views.homepage),
     url(r'^create_project', views.create_project),
     url(r'^Signup',views.Signup),
-    url(r'^brain_stroming',views.brain_stroming)
+    url(r'^brain_storming',views.brain_storming)
 ]
