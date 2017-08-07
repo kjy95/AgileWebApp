@@ -114,7 +114,7 @@ def sendTodoSubmit(request):
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])))
     todos = Todo.objects.all()
     context = {'todos' : todos}
-    return render(request, 'startPages/planMainPage.html', context)
+    return render(request, 'startPages/left_navi/planMainPage.html', context)
 
 def homepage(request):
     projects = Project.objects.all()
@@ -180,8 +180,11 @@ def Signin(request):
         check_password=User.objects.filter(email=input_email,password=input_password).exists()
         
         if check_password is True :
+            
+            projects = Project.objects.all()
             request.session['userid']=input_email
-            userdatas={'email' :input_email,'password':input_password}
+            userdatas={'email' :input_email,'password':input_password, 'projects' : projects}
+            
             return render(request,'startPages/top_navi/homepage.html',userdatas)
         
         elif check_password is False :
