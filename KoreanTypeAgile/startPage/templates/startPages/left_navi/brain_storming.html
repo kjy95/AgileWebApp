@@ -1,0 +1,55 @@
+{% extends "logged_in_page_base.html" %}
+
+{% block content %}
+<head></head>
+<style>
+    .idea_form{
+        /* 검정 네모 박스 */
+        position: fixed;
+        top: 465px;
+        left: 190px;
+        border:1px black solid;
+        padding-bottom: 30px;
+    }
+    #input_idea{
+        /* 입력창 */
+        width:1040px;
+        height:100px;
+    }
+    #submit_idea{
+        /* 제출하기 버튼 */
+        position: fixed;
+        top:570px;/* 570 */
+        left:1157px;/* 1157 */
+    }
+    .idea_table{
+        border : 1px black solid;
+    }
+</style>
+{% if content %}
+    <h1>PJ NAME</h1>
+    <table class="table table-hover">
+        {% for idea in content %}
+        <tr>
+        <td>{{idea.ideas}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+<body>
+     <form  method="POST"  action="brain_storming" class="idea_form">
+         {% csrf_token %}
+     <input type="text" class="form-control" id="input_idea" placeholder="아이디어를 입력해주세요" name="input_idea"> 
+    <button tpye="submit" onclick="return check_blank()" id="submit_idea">제출하기</button>
+     </form>
+</body>
+<script>
+    function check_blank(){
+        var idea=document.getElementById("input_idea").value;
+        if (idea == ""){
+            alert("아이디어가 비어있습니다.");
+            return false;
+        }
+    }
+</script>
+{% endblock content %}

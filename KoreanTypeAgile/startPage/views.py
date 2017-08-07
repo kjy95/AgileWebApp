@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import User, Todo, Project
+from .models import User, Todo, Project, Brainstorm
 import datetime
 
 def index(request): 
@@ -193,7 +193,16 @@ def Signin(request):
     userdatas={'email' :input_email,'password':input_password}   
     return render(request,'startPages/index.html',userdatas)
    
-def brain_stroming(request):
-    return render(request,'startPages/left_navi/brain_stroming.html')
+def brain_storming(request):
+    project_name=None
+    idea=request.POST.get('input_idea',None)
+    if idea is not None :
+        temp=Brainstorm(ideas=idea)
+        temp.save()
+        content=Brainstorm.objects.all()
+        return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
+    else :
+        content=Brainstorm.objects.all()
+        return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
     
