@@ -7,11 +7,11 @@
     <p>Which project are you going to make?</p>
     <form class="" action="send_project_submit" method="post">
             <div>projectName</div> 
-            <input type="text" name="big_project_name" id = text></input>  
+            <input type="text" name="big_project_name" class="form-control" id = text></input>  
             <div>contents</div>
-            <textarea name="project_contents" id = textField> </textarea>
+            <textarea name="project_contents" class="form-control" rows="10" id = textField> </textarea>
             <div>team</div>
-            <textarea name="project_member" id = textField> </textarea>
+            <textarea name="project_member" class="form-control" id = textField> </textarea>
             {% csrf_token %}
             <button type = "" name="submit" class="btn btn-info" id = button>CREATE PROJECT</button>
             <a href="homepage" button type="button" class="btn btn-default">BACK</button>
