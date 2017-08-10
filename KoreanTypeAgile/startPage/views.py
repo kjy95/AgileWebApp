@@ -3,7 +3,11 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import User, Todo, Project, Brainstorm
-import datetime
+from konlpy.tag import Twitter
+from collections import Counter
+from os import path
+import datetime,csv,pytagcloud,os
+import matplotlib.pyplot as plt
 
 def index(request): 
     return render(request, 'startPages/index.html')  
@@ -117,15 +121,24 @@ def sendTodoSubmit(request):
     return render(request, 'startPages/left_navi/planMainPage.html', context)
 
 def homepage(request):
+    count_noun=return_list_of_tuples()
+    #list of tuple 형태인, (단어,나온횟수) 를 count_noun 에 초기화합니다
+    tuple_countnoun=tuple(count_noun)
+    taglist=pytagcloud.make_tags(tuple_countnoun)
+    pytagcloud.create_tag_image(taglist,'wordcloud.jpg',size=(600,300),fontname='Nanum Gothic',rectangular=False)
+    os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
     projects = Project.objects.all()
     context = {'projects' : projects}
     return render(request, 'startPages/top_navi/homepage.html', context)
 def profile(request):
     userid=request.session['userid']
+    #로그인 할때 저장한 session 을 불러서 userid 에 저장 해줍니다. userid 에는 로그인한 email이 저장 됩니다.
     userinfo=User.objects.filter(email=userid).values('name','email','project')
-    userinfo_list = [entry for entry in userinfo]
+    #로그인한 email 값들 중에서 name , email , project 값들을 가져 옵니다.
+    #129~134 -> render 함수에서 dict 형태를 요구해서 바꿔주는 코드 입니다.
+    userinfo_list = [entry for entry in userinfo] # userinfo를 list로 바꿔주는 코드    
     userinfo_dict={}
-    for user in userinfo_list:
+    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
         for items in user :
            value=user[items]
            userinfo_dict[items]=value
@@ -154,58 +167,94 @@ def Signup(request) :
     name=request.POST['name']
     email=request.POST['email']
     password=request.POST['password']
-    
+    #signuppage.html 에서 POST 방식으로 입력 받은 값을 전송 해주고, 받아오는 코드 
+    '''
     try:
         userdata=User.objects.get(name = name,email = email, password=password)
     except:
-        userdata=User(name = name,email = email,password = password)
-    
-    if User.objects.filter(email=email).exists() is False :
-        userdata.save()
+    '''
+    userdata=User(name = name,email = email,password = password)
+    #userdata에 User 클래스 필드에 값을 초기화 시켜 놓습니다
+    if User.objects.filter(email=email).exists() is True : #입력받은 이메일이 DB에 존재 한다면! (이메일중복검사)
+        messages.error(request,"이미 존재하는 이메일 입니다.") #error 타입으로 message를 보내줍니다.
+        return render(request,'startPages/signUpPage.html') 
+    else : # 이메일이 중복되지 않은 경우 
+        userdata.save() 
     
     userdatas=User.objects.all()
     userdatas={'userdatas':userdatas}
-    
-    if User.objects.filter(email=email).exists() :
-        messages.error(request,"이미 존재하는 이메일 입니다.")
-        return render(request,'startPages/signUpPage.html',userdatas) 
     return render(request,'startPages/index.html',userdatas)
 
 def Signin(request):
     input_email = request.POST.get('email',None)
     input_password=request.POST.get('password',None)
+    #signin.html에서 받은 값을 체크하고, 없는경우 None 으로 설정 해줍니다.
     check_email=User.objects.filter(email=input_email).exists()
-    
-    if check_email is True :
+    #DB에 입력받은 email 이 있는지 체크하고 Ture False 로 return 받은 값을 check_email 에 초기화 시킵니다.
+    if check_email is True : # email 은 일치 
         check_password=User.objects.filter(email=input_email,password=input_password).exists()
-        
-        if check_password is True :
+    
+        if check_password is True : # password 도 일치
             
             projects = Project.objects.all()
             request.session['userid']=input_email
+            #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
+            # ex ) {'userid' : input_email } 
             userdatas={'email' :input_email,'password':input_password, 'projects' : projects}
-            
             return render(request,'startPages/top_navi/homepage.html',userdatas)
         
-        elif check_password is False :
+        elif check_password is False : # email 은 일치, password는 불일치
             messages.error(request,"비밀번호가 일치하지 않습니다.")
-   
-    elif check_email is False: 
+            
+    elif check_email is False:# email이 불일치 , password는 체크 X 
         messages.error(request,"존재하지 않는 이메일 입니다.")
     
     userdatas={'email' :input_email,'password':input_password}   
     return render(request,'startPages/index.html',userdatas)
    
 def brain_storming(request):
-    project_name=None
+    output_csv() #csv 파일로 아이디어들을 추출합니다.
+    project_name=None #수정 예정
     idea=request.POST.get('input_idea',None)
-    if idea is not None :
+    #idea에 입력받은 값을 저장, 없으면 None 으로 초기화.
+    #None 은 처음 Brainstorming.html을 실행시켰을때 발생하는 값입니다. 
+    if idea is not None :# idea에 내용을 입력한 경우
         temp=Brainstorm(ideas=idea)
         temp.save()
         content=Brainstorm.objects.all()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
-    else :
+    else :# 입력하지 않은 경우 or 처음 실행시킨 경우
         content=Brainstorm.objects.all()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
-    
+def output_csv(): 
+    with open('Brainstorming_idea.csv', 'w',newline='') as csvfile:
+        #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
+        spamwriter = csv.writer(csvfile)
+        #csv 객체를 만들어주고
+        ideas=Brainstorm.objects.values('ideas')
+        #<QuerySet [{'ideas': '테스트 1'}, {'ideas': '테스트 2'} >
+        for idea in ideas:
+            spamwriter.writerow([idea['ideas']])
+            #Brainstorming.idea.csv 파일에 적어 줍니다. 
+            # idea['ideas']가 아니라 [idea['ideas']] 인 이유는, 전자의 경우 모든 단어마다 쉼표를 넣어주게 됩니다. 
+def return_list_of_tuples():
+    with open('Brainstorming_idea.csv','r') as csvfile:
+        #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
+        text=csvfile.read()
+        split=Twitter()
+        #konlpy 라는 한국어 정보처리 모듈 중 하나인 Twitter 기능입니다.
+        nouns=split.nouns(text)
+        #text 에서 명사만 추출하는 코드입니다
+        #ex) ['아이디어', '오늘', '년', '월', '일', '오늘', '비', '피자', '마우스', '컴퓨터'] 
+        counts=Counter(nouns)
+        #ex) ({'오늘': 2, '아이디어': 1, '년': 1, '월': 1, '일': 1, '비': 1, '피자': 1, '마우스': 1, '컴퓨터': 1})
+        count_noun=[]
+        #Wordcloud 객체에서 list of tuple 형태를 원하고 있어서, counts 를 재가공하는 코드입니다.
+        for noun, count in counts.most_common(20): 
+            temp=(noun , count)
+            count_noun.append(temp)
+        return count_noun
+        
+
+        
