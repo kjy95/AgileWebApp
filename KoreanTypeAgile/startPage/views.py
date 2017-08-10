@@ -227,6 +227,7 @@ def brain_storming(request):
         content=Brainstorm.objects.all()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
+
 def output_csv(): 
     with open('Brainstorming_idea.csv', 'w',newline='') as csvfile:
         #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
@@ -258,3 +259,19 @@ def return_list_of_tuples():
         
 
         
+
+    
+def change_todo_data(request):   
+    todo_id = request.POST['todo_id'] 
+    target_id = request.POST['target_id'] 
+    target_todo_obj = Todo.objects.get(id=todo_id)
+    if target_id == "TODO":
+        target_todo_obj.make_status_todo()
+    elif target_id == "DOING":
+        target_todo_obj.make_status_do()
+    elif target_id == "DONE":
+        target_todo_obj.make_status_done()
+    
+    target_todo_obj.save()
+    return HttpResponse("You're looking at question")
+
