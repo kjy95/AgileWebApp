@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import User, Todo, Project, Brainstorm
 import datetime
+import xlwt
 
 def index(request): 
     return render(request, 'startPages/index.html')  
@@ -222,3 +223,18 @@ def change_todo_data(request):
     
     target_todo_obj.save()
     return HttpResponse("You're looking at question")
+
+def excel_output(request):
+    wbk = xlwt.Workbook()
+    sheet = wbk.add_sheet('project')
+    sheet.write(0, 0, '이름')
+    sheet.write(0, 1, '시작 일')
+    sheet.write(0, 2, '마감 예상일')
+    sheet.write(0, 3, '할일')
+    sheet_2 = wbk.add_sheet('burndown chart')
+    sheet_2.write(0, 0, '이름')
+    sheet_2.write(0, 4, '기간 내 할일 수행률')
+    
+    wbk.save('test.xls')
+    return HttpResponse("You're looking at question")
+
