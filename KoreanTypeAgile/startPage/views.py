@@ -209,3 +209,16 @@ def brain_storming(request):
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
     
+def change_todo_data(request):   
+    todo_id = request.POST['todo_id'] 
+    target_id = request.POST['target_id'] 
+    target_todo_obj = Todo.objects.get(id=todo_id)
+    if target_id == "TODO":
+        target_todo_obj.make_status_todo()
+    elif target_id == "DOING":
+        target_todo_obj.make_status_do()
+    elif target_id == "DONE":
+        target_todo_obj.make_status_done()
+    
+    target_todo_obj.save()
+    return HttpResponse("You're looking at question")
