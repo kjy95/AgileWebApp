@@ -2,17 +2,14 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import User, Todo, Project, Brainstorm
-<<<<<<< HEAD
+from .models import User, Todo, Project, Brainstorm 
 import datetime
-import xlwt
-=======
+import xlwt 
 from konlpy.tag import Twitter
 from collections import Counter
 from os import path
 import datetime,csv,pytagcloud,os
-import matplotlib.pyplot as plt
->>>>>>> master
+import matplotlib.pyplot as plt 
 
 def index(request): 
     return render(request, 'startPages/index.html')  
