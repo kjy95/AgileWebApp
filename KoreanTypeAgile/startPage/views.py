@@ -113,22 +113,32 @@ def sendTodoSubmit(request):
 
         tempCount = tempCount + 1
         
-
     todoSaveForm(todoName = projectNameArray[tempCount],
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])))
+    content_todo=Todo.objects.values('todoContents')
+    #<QuerySet [{'todoContents': ' 11111111'}, {'todoContents': ' 312123312'}]>
+    '''
+    output_csv('todocontents.csv','todoContents','todoContents')
+    make_wordcloud('todocontents.csv','todo_wordcloud.jpg',300,100)
+    try:
+        os.rename('todo_wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
+    except:
+        os.remove('..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
+        os.rename('todo_wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
+    '''
     todos = Todo.objects.all()
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
 
 def homepage(request):
-    count_noun=return_list_of_tuples()
-    #list of tuple 형태인, (단어,나온횟수) 를 count_noun 에 초기화합니다
-    tuple_countnoun=tuple(count_noun)
-    taglist=pytagcloud.make_tags(tuple_countnoun)
-    pytagcloud.create_tag_image(taglist,'wordcloud.jpg',size=(600,300),fontname='Nanum Gothic',rectangular=False)
-    os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+    wordcloud_flag=request.session['flag']
+    if wordcloud_flag is 1 :
+        os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',600,300)
+        os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        request.session['flag'] = 0
     projects = Project.objects.all()
     context = {'projects' : projects}
     return render(request, 'startPages/top_navi/homepage.html', context)
@@ -170,11 +180,6 @@ def Signup(request) :
     email=request.POST['email']
     password=request.POST['password']
     #signuppage.html 에서 POST 방식으로 입력 받은 값을 전송 해주고, 받아오는 코드 
-    '''
-    try:
-        userdata=User.objects.get(name = name,email = email, password=password)
-    except:
-    '''
     userdata=User(name = name,email = email,password = password)
     #userdata에 User 클래스 필드에 값을 초기화 시켜 놓습니다
     if User.objects.filter(email=email).exists() is True : #입력받은 이메일이 DB에 존재 한다면! (이메일중복검사)
@@ -200,6 +205,7 @@ def Signin(request):
             
             projects = Project.objects.all()
             request.session['userid']=input_email
+            request.session['flag']=0
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
             userdatas={'email' :input_email,'password':input_password, 'projects' : projects}
@@ -215,7 +221,6 @@ def Signin(request):
     return render(request,'startPages/index.html',userdatas)
    
 def brain_storming(request):
-    output_csv() #csv 파일로 아이디어들을 추출합니다.
     project_name=None #수정 예정
     idea=request.POST.get('input_idea',None)
     #idea에 입력받은 값을 저장, 없으면 None 으로 초기화.
@@ -223,6 +228,8 @@ def brain_storming(request):
     if idea is not None :# idea에 내용을 입력한 경우
         temp=Brainstorm(ideas=idea)
         temp.save()
+        output_csv('Brainstorming_idea.csv','ideas','Brainstorm') #csv 파일로 아이디어들을 추출합니다.
+        request.session['flag'] = 1
         content=Brainstorm.objects.all()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
     else :# 입력하지 않은 경우 or 처음 실행시킨 경우
@@ -230,19 +237,19 @@ def brain_storming(request):
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
 
-def output_csv(): 
-    with open('Brainstorming_idea.csv', 'w',newline='') as csvfile:
+def output_csv(text,key,class_name): 
+    with open(text, 'w',newline='') as csvfile:
         #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
         spamwriter = csv.writer(csvfile)
         #csv 객체를 만들어주고
-        ideas=Brainstorm.objects.values('ideas')
+        ideas=Brainstorm.objects.values(key)
         #<QuerySet [{'ideas': '테스트 1'}, {'ideas': '테스트 2'} >
         for idea in ideas:
-            spamwriter.writerow([idea['ideas']])
+            spamwriter.writerow([idea[key]])
             #Brainstorming.idea.csv 파일에 적어 줍니다. 
             # idea['ideas']가 아니라 [idea['ideas']] 인 이유는, 전자의 경우 모든 단어마다 쉼표를 넣어주게 됩니다. 
-def return_list_of_tuples():
-    with open('Brainstorming_idea.csv','r') as csvfile:
+def return_list_of_tuples(csv_file):
+    with open(csv_file,'r') as csvfile:
         #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
         text=csvfile.read()
         split=Twitter()
@@ -258,11 +265,7 @@ def return_list_of_tuples():
             temp=(noun , count)
             count_noun.append(temp)
         return count_noun
-        
 
-        
-
-    
 def change_todo_data(request):   
     todo_id = request.POST['todo_id'] 
     target_id = request.POST['target_id'] 
@@ -276,7 +279,6 @@ def change_todo_data(request):
     
     target_todo_obj.save()
     return HttpResponse("You're looking at question")
-    
 def excel_output(request):
     wbk = xlwt.Workbook()
     sheet = wbk.add_sheet('project')
@@ -290,3 +292,10 @@ def excel_output(request):
     
     wbk.save('test.xls')
     return HttpResponse("You're looking at question")
+
+def make_wordcloud(text,image_name,width,height):
+    list_of_tuple=return_list_of_tuples(text)
+    tuple_countnoun=tuple(list_of_tuple)
+    taglist=pytagcloud.make_tags(tuple_countnoun)
+    pytagcloud.create_tag_image(taglist,image_name,size=(width,height),fontname='Nanum Gothic',rectangular=False)
+    
