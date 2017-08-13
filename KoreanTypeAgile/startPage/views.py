@@ -116,16 +116,6 @@ def sendTodoSubmit(request):
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])))
     content_todo=Todo.objects.values('todoContents')
-    #<QuerySet [{'todoContents': ' 11111111'}, {'todoContents': ' 312123312'}]>
-    '''
-    output_csv('todocontents.csv','todoContents','todoContents')
-    make_wordcloud('todocontents.csv','todo_wordcloud.jpg',300,100)
-    try:
-        os.rename('todo_wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
-    except:
-        os.remove('..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
-        os.rename('todo_wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
-    '''
     todos = Todo.objects.all()
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
@@ -133,9 +123,13 @@ def sendTodoSubmit(request):
 def homepage(request):
     wordcloud_flag=request.session['flag']
     if wordcloud_flag is 1 :
-        os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
-        make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',600,300)
-        os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        try:
+            os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
+            os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        except:    
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
+            os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
         request.session['flag'] = 0
     projects = Project.objects.all()
     context = {'projects' : projects}
@@ -203,7 +197,7 @@ def Signin(request):
             
             projects = Project.objects.all()
             request.session['userid']=input_email
-            request.session['flag']=0
+            request.session['flag'] = 1
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
             userdatas={'email' :input_email,'password':input_password, 'projects' : projects}
@@ -226,7 +220,7 @@ def brain_storming(request):
     if idea is not None :# idea에 내용을 입력한 경우
         temp=Brainstorm(ideas=idea)
         temp.save()
-        output_csv('Brainstorming_idea.csv','ideas','Brainstorm') #csv 파일로 아이디어들을 추출합니다.
+        output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
         request.session['flag'] = 1
         content=Brainstorm.objects.all()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
@@ -235,7 +229,7 @@ def brain_storming(request):
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
 
-def output_csv(text,key,class_name): 
+def output_csv(text,key): 
     with open(text, 'w',newline='') as csvfile:
         #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
         spamwriter = csv.writer(csvfile)

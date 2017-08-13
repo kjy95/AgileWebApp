@@ -4,7 +4,10 @@
 {% load staticfiles %}
    
    {% if projects %}
-        <img name="wordcloud" src="{% static 'image/wordcloud.jpg' %}">        
+        <div class="wordcloud">
+        <img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">
+        <!--<img name="brain_struct" src="{% static 'image/brain_struct.jpg' %}">-->
+        </div> 
         <table class="table table-bordered" id = "todoTable">
         <thead>
         <tr>
