@@ -15,6 +15,11 @@ def loginPage(request):
     return render(request, 'startPages/loginPage.html')
 def signUpPage(request):
     return render(request, 'startPages/signUpPage.html')
+def planMainPage_project(request,project_name):
+    request.session['project_name']=project_name
+    todos = Todo.objects.all()
+    context = {'todos' : todos}
+    return render(request, 'startPages/left_navi/planMainPage.html', context)
 def planMainPage(request):
     todos = Todo.objects.all()
     context = {'todos' : todos}
@@ -34,7 +39,7 @@ def send_project_submit(request):
     project_contents = request.POST['project_contents']
     project_member = request.POST['project_member']
     project = Project(
-                big_project_name = big_project_name,
+                project_name = big_project_name,
                 project_contents = project_contents,
                 project_member = project_member)
                 
@@ -42,6 +47,7 @@ def send_project_submit(request):
     project.save()
     projects = Project.objects.all()
     context = {'projects' : projects}
+    request.session['member_count'] = 0
     return render(request, 'startPages/top_navi/homepage.html', context)
 def sendTodoSubmit(request):
     projectName = request.POST['projectName']
@@ -123,6 +129,7 @@ def sendTodoSubmit(request):
 def homepage(request):
     wordcloud_flag=request.session['flag']
     if wordcloud_flag is 1 :
+        output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
         try:
             os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
             make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
@@ -148,6 +155,7 @@ def profile(request):
            userinfo_dict[items]=value
     return render(request, 'startPages/top_navi/profile.html',userinfo_dict)  
 def create_project(request):
+    request.session['member_count'] = 0
     return render(request, 'startPages/top_navi/create_project.html')    
 def search(request):
     return render(request, 'startPages/left_navi/search.html')    
@@ -165,6 +173,23 @@ def wiki(request):
     return render(request, 'startPages/left_navi/wiki.html')    
 def team(request):
     return render(request, 'startPages/left_navi/team.html')    
+def popup_invite_team(request):
+    count=request.session['member_count']
+    member=request.POST.get('project_member',None)
+    print(member)
+    if member is None :
+        context={}
+        return render(request,'startPages/popup_invite_team.html',context)    
+    member_exist=User.objects.filter(email=member).exists()
+    
+    if member_exist is True :
+        messages.info(request,"추가되었습니다.")
+        request.session['member_count'] = count + 1
+        context={'useremail':member,'count':count}
+    else :
+        messages.info(request,"존재하지 않는 이메일 입니다.")
+        context={}
+    return render(request,'startPages/popup_invite_team.html',context)    
     
 
 def Signup(request) :
@@ -213,20 +238,19 @@ def Signin(request):
     return render(request,'startPages/index.html',userdatas)
    
 def brain_storming(request):
-    project_name=None #수정 예정
     idea=request.POST.get('input_idea',None)
+    project_name=request.session['project_name']
     #idea에 입력받은 값을 저장, 없으면 None 으로 초기화.
     #None 은 처음 Brainstorming.html을 실행시켰을때 발생하는 값입니다. 
     if idea is not None :# idea에 내용을 입력한 경우
-        temp=Brainstorm(ideas=idea)
+        temp=Brainstorm(ideas=idea,project_name=project_name)
         temp.save()
-        output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
         request.session['flag'] = 1
         content=Brainstorm.objects.all()
-        return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
+        return render(request,'startPages/left_navi/brain_storming.html',{'content':content,'project_name':project_name})
     else :# 입력하지 않은 경우 or 처음 실행시킨 경우
         content=Brainstorm.objects.all()
-        return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
+        return render(request,'startPages/left_navi/brain_storming.html',{'content':content,'project_name':project_name})
 
 
 def output_csv(text,key): 
