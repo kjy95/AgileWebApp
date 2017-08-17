@@ -6,7 +6,6 @@ class User(models.Model):
     name = models.CharField(max_length=20)
     email = models.CharField(max_length=40)
     password = models.CharField(max_length=40, default=' ')
-    project = models.CharField(max_length=40, default='')#list
 
     def __str__(self):
         return self.name
@@ -15,6 +14,7 @@ class User(models.Model):
 
 class Project(models.Model):
     project_name = models.CharField(max_length=40, default='')
+    project_leader = models.CharField(max_length=40, default='')
     project_member = models.CharField(max_length=40, default='')
     project_contents = models.CharField(max_length=40, default='')
 

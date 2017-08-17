@@ -17,6 +17,11 @@ def loginPage(request):
     return render(request, 'startPages/loginPage.html')
 def signUpPage(request):
     return render(request, 'startPages/signUpPage.html')
+def planMainPage_project(request,project_name):
+    request.session['project_name']=project_name
+    todos = Todo.objects.all()
+    context = {'todos' : todos}
+    return render(request, 'startPages/left_navi/planMainPage.html', context)
 def planMainPage(request):
     todos = Todo.objects.all()
     context = {'todos' : todos}
@@ -37,7 +42,7 @@ def send_project_submit(request):
     project_contents = request.POST['project_contents']
     project_member = request.POST['project_member']
     project = Project(
-                big_project_name = big_project_name,
+                project_name = big_project_name,
                 project_contents = project_contents,
                 project_member = project_member)
                 
@@ -45,6 +50,7 @@ def send_project_submit(request):
     project.save()
     projects = Project.objects.all()
     context = {'projects' : projects}
+    request.session['member_count'] = 0
     return render(request, 'startPages/top_navi/homepage.html', context)
 def sendTodoSubmit(request):
     projectName = request.POST['projectName']
@@ -139,17 +145,7 @@ def sendTodoSubmit(request):
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])))
     content_todo=Todo.objects.values('todoContents')
-    #<QuerySet [{'todoContents': ' 11111111'}, {'todoContents': ' 312123312'}]>
-    '''
-    output_csv('todocontents.csv','todoContents','todoContents')
-    make_wordcloud('todocontents.csv','todo_wordcloud.jpg',300,100)
-    try:
-        os.rename('todo_wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
-    except:
-        os.remove('..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
-        os.rename('todo_wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/todo_wordcloud.jpg')
-    '''
-    excel_output()#excel에 반영
+
     todos = Todo.objects.all()
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
@@ -157,10 +153,17 @@ def sendTodoSubmit(request):
 def homepage(request):
     wordcloud_flag=request.session['flag']
     if wordcloud_flag is 1 :
-        os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
-        make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',600,300)
-        os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
-        request.session['flag'] = 0#flag는 유저가 로그인여부
+
+        output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
+        try:
+            os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
+            os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        except:    
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
+            os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        request.session['flag'] = 0
+
     projects = Project.objects.all()
     context = {'projects' : projects}
     return render(request, 'startPages/top_navi/homepage.html', context)
@@ -179,6 +182,7 @@ def profile(request):
            
     return render(request, 'startPages/top_navi/profile.html',userinfo_dict)  
 def create_project(request):
+    request.session['member_count'] = 0
     return render(request, 'startPages/top_navi/create_project.html')    
 def search(request):
     return render(request, 'startPages/left_navi/search.html')    
@@ -196,6 +200,23 @@ def wiki(request):
     return render(request, 'startPages/left_navi/wiki.html')    
 def team(request):
     return render(request, 'startPages/left_navi/team.html')    
+def popup_invite_team(request):
+    count=request.session['member_count']
+    member=request.POST.get('project_member',None)
+    print(member)
+    if member is None :
+        context={}
+        return render(request,'startPages/popup_invite_team.html',context)    
+    member_exist=User.objects.filter(email=member).exists()
+    
+    if member_exist is True :
+        messages.info(request,"추가되었습니다.")
+        request.session['member_count'] = count + 1
+        context={'useremail':member,'count':count}
+    else :
+        messages.info(request,"존재하지 않는 이메일 입니다.")
+        context={}
+    return render(request,'startPages/popup_invite_team.html',context)    
     
 
 def Signup(request) :
@@ -228,7 +249,7 @@ def Signin(request):
             
             projects = Project.objects.all()
             request.session['userid']=input_email
-            request.session['flag']=0
+            request.session['flag'] = 1
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
             userdatas={'email' :input_email,'password':input_password, 'projects' : projects}
@@ -244,23 +265,22 @@ def Signin(request):
     return render(request,'startPages/index.html',userdatas)
    
 def brain_storming(request):
-    project_name=None #수정 예정
     idea=request.POST.get('input_idea',None)
+    project_name=request.session['project_name']
     #idea에 입력받은 값을 저장, 없으면 None 으로 초기화.
     #None 은 처음 Brainstorming.html을 실행시켰을때 발생하는 값입니다. 
     if idea is not None :# idea에 내용을 입력한 경우
-        temp=Brainstorm(ideas=idea)
+        temp=Brainstorm(ideas=idea,project_name=project_name)
         temp.save()
-        output_csv('Brainstorming_idea.csv','ideas','Brainstorm') #csv 파일로 아이디어들을 추출합니다.
         request.session['flag'] = 1
         content=Brainstorm.objects.all()
-        return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
+        return render(request,'startPages/left_navi/brain_storming.html',{'content':content,'project_name':project_name})
     else :# 입력하지 않은 경우 or 처음 실행시킨 경우
         content=Brainstorm.objects.all()
-        return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
+        return render(request,'startPages/left_navi/brain_storming.html',{'content':content,'project_name':project_name})
 
 
-def output_csv(text,key,class_name): 
+def output_csv(text,key): 
     with open(text, 'w',newline='') as csvfile:
         #Brainstorming_idea.csv 를 w 만들어주고, csvfile 이라는 변수에 초기화
         spamwriter = csv.writer(csvfile)

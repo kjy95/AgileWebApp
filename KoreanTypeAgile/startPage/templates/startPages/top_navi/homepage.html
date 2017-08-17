@@ -4,7 +4,10 @@
 {% load staticfiles %}
    
    {% if projects %}
-        <img name="wordcloud" src="{% static 'image/wordcloud.jpg' %}">        
+        <div class="wordcloud">
+        <img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">
+        <!--<img name="brain_struct" src="{% static 'image/brain_struct.jpg' %}">-->
+        </div> 
         <table class="table table-bordered" id = "todoTable">
         <thead>
         <tr>
@@ -15,7 +18,7 @@
         <tbody>
           {% for project in projects %}
         <tr>
-            <td><a href = "planMainPage"> {{project.project_name}}</a></td>
+            <td><a href = "planMainPage/{{project.project_name}}/"> {{project.project_name}}</td></a>
             <td> {{project.project_contents}} </td>
         </tr>
           {% endfor %}

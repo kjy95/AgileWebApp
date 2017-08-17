@@ -10,10 +10,29 @@
             <input type="text" name="big_project_name" class="form-control" id = text></input>  
             <div>contents</div>
             <textarea name="project_contents" class="form-control" rows="10" id = textField> </textarea>
-            <div>team</div>
-            <textarea name="project_member" class="form-control" id = textField> </textarea>
+            Team member</br>
+            <button onclick="return Popup()" type = "" name="search" class="btn btn-info" id = button>검색하기</button>
             {% csrf_token %}
+            <form name="p_form">
+                팀원1<input type="text" id="p_txt0">
+                팀원2<input type="text" id="p_txt1">
+                팀원3<input type="text" id="p_txt2">
+                팀원4<input type="text" id="p_txt3">
+            </form>
+            </br></br></br>
             <button type = "" name="submit" class="btn btn-info" id = button>CREATE PROJECT</button>
-            <a href="homepage" button type="button" class="btn btn-default">BACK</button>
      </form>
+    <script type="text/javascript">
+        function Popup(){
+            var popurl="popup_invite_team.html";
+            var popOption = "width=640, height=10, resizable=no, scrollbars=no, status=no;";
+            window.name="pwin";
+            window.open(popurl,"",popOption);
+            return false;
+        }
+    </script>
+
+
+
+
 {% endblock content %}
