@@ -261,6 +261,7 @@ def Signin(request):
             projects = Project.objects.all()
             request.session['userid']=input_email
             request.session['flag'] = 1
+            request.session.set_expiry(600)
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
             projects = Project.objects.filter(project_member=input_email).values('project_name','project_contents');
@@ -385,7 +386,8 @@ def excel_output(project_name):
     
     
     i = 8
-    todos = Todo.objects.filter(project_name=project_name).values('todoName','todoContents','startDate','endDate')
+    todos = Todo.objects.filter(project_name=project_name).values('todoName','todoContents','startDate','endDate','person_created')
+    print(todos)
     for todo in todos:
         sheet.write(i, 0, todo.person_created, name_style)
         sheet.write(i, 1, todo.startDate.strftime("%Y-%m-%d %H:%M:%S"),contents_style)
