@@ -9,7 +9,7 @@ powershell에서 django-messages-master 디렉토리로 이동후 아래 설치�
 https://github.com/arneb/django-messages
 설치법 : 
 http://django-messages.readthedocs.io/en/latest/install.html
-<<<<< messages 모듈은 이제 github에 같이 올라가 있습니다 다운받으실 필요는 없고, 설치만 해주시면 딥니다>>>>>
+<<<<< messages 모듈은 이제 github에 같이 올라가 있습니다 다운받으실 필요는 없고, 설치만 해주시면 됩니다>>>>>
 Konlpy(한국어 정보처리 모듈, 문자열에서 명사를 추출 수 있는 모듈) 설치하기 
 본 모듈은, wordcloud 를 생성할 때, 명사만을 추출해서 진행을 하기 때문에 설치해줍니다.
 0. 비트수를 모두 맞추어 주셔야 합니다. (가끔 'python이 중지되었습니다' 하고 서버가 자동으로 꺼집니다)
