@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head lang="en">
+{% load staticfiles %}
+    {% if useremail %}
+        <form name="c_form">
+            <input type="hidden" id="c_txt" value={{useremail}}>
+        </form>
+        <script>
+            opener.document.getElementById("p_txt{{count}}").value = document.getElementById("c_txt").value;
+        </script>
+    {% endif %}
+    <meta charset="utf-8">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</head>
+<body>
+    <form action="popup_invite_team" method="POST">
+        {% csrf_token %}
+        <input type="email" class="form-control" id="project_member" placeholder="팀원 이메일을 입력해주세요" name="project_member">
+        <button type="submit" class="btn btn-primary" style= "width:100%;">검색하기</button>
+    </form>
+</body>
