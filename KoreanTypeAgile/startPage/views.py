@@ -99,8 +99,7 @@ def sendTodoSubmit(request):
 
     while tempCount < maxCount:
         if projectNameCount >= tempCount and contentsCount >= tempCount : 
-            todoSaveForm(
-                        todoName = projectNameArray[tempCount],
+            todoSaveForm( todoName = projectNameArray[tempCount],
                         person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
@@ -146,6 +145,7 @@ def sendTodoSubmit(request):
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])))
     content_todo=Todo.objects.values('todoContents')
 
+    excel_output()#excel에 반영
     todos = Todo.objects.all()
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
