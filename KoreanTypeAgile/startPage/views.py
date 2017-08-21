@@ -23,13 +23,14 @@ def planMainPage_project(request,project_name):
     return render(request, 'startPages/left_navi/planMainPage.html', context)
 def planMainPage(request):
     project_name=request.session['project_name']
-    todos = Todo.objects.filter(project_name=project_name).values('todoName','todoContents','startDate','endDate')
+    todos = Todo.objects.filter(project_name=project_name)
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
 def todoPopUp(request):
     return render(request, 'startPages/todoPopUp.html')
-def todoSaveForm(todoName, todoContents, startDate, endDate,project_name):
-    todo = Todo(todoName = todoName,
+def todoSaveForm(todoName, person_created, todoContents, startDate, endDate,project_name):
+    todo = Todo(todoName = todoName,  
+                 person_created = person_created,
                 todoContents = todoContents,
                 startDate = startDate,
                 endDate = endDate,
@@ -75,7 +76,19 @@ def sendTodoSubmit(request):
     startDate = request.POST['startDate']
     endDate = request.POST['endDate']
     project_name=request.session['project_name']
+    #create_user
+    userid=request.session['userid']
+    userinfo=User.objects.filter(email=userid).values('name')
+    userinfo_list = [entry for entry in userinfo]  
+    userinfo_dict={}
+    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
+        for items in user :
+           value=user[items]
+           userinfo_dict[items]=value
+    create_user = userinfo_dict["name"]
 
+    print(create_user)
+    
     maxCount = 0
     projectNameCount = -1
     contentsCount = -1
@@ -104,7 +117,9 @@ def sendTodoSubmit(request):
 
     while tempCount < maxCount:
         if projectNameCount >= tempCount and contentsCount >= tempCount : 
-            todoSaveForm(todoName = projectNameArray[tempCount],
+            todoSaveForm( 
+                todoName = projectNameArray[tempCount],
+                        person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
@@ -112,7 +127,9 @@ def sendTodoSubmit(request):
         #todo - error
         elif projectNameCount >= tempCount and contentsCount < tempCount :
             if contentsCount == -1 :
-                todoSaveForm(todoName = projectNameArray[tempCount],
+                todoSaveForm(
+                     todoName = projectNameArray[tempCount],
+                        person_created = create_user,
                         todoContents = "",
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
@@ -120,7 +137,9 @@ def sendTodoSubmit(request):
                         
             else:
 
-                todoSaveForm(todoName = projectNameArray[tempCount],
+                todoSaveForm(
+                    todoName = projectNameArray[tempCount],
+                            person_created = create_user,
                             todoContents = contentsArray[contentsCount],
                             startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                             endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
@@ -128,13 +147,17 @@ def sendTodoSubmit(request):
 
         elif projectNameCount < tempCount and contentsCount >= tempCount :
             if projectNameCount == -1 :
-                todoSaveForm(todoName = "",
+                todoSaveForm(
+                    todoName = "",
+                             person_created = create_user,
                             todoContents = contentsArray[tempCount],
                             startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                             endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
                             project_name=project_name)
             else:
-                todoSaveForm(todoName = projectNameArray[projectNameCount],
+                todoSaveForm(
+                    todoName = projectNameArray[projectNameCount],
+                        person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
@@ -143,15 +166,18 @@ def sendTodoSubmit(request):
 
         tempCount = tempCount + 1
         
-    todoSaveForm(todoName = projectNameArray[tempCount],
+    todoSaveForm(
+        todoName = projectNameArray[tempCount],
+                         person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
                         project_name=project_name)
     content_todo=Todo.objects.values('todoContents')
-    todos = Todo.objects.filter(project_name=project_name).values('todoName','todoContents','startDate','endDate')
+ 
+    todos = Todo.objects.filter(project_name=project_name).values()
     project_name=request.session['project_name']
-    excel_output(project_name)
+    excel_output()#excel에 반영
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
 
@@ -334,6 +360,7 @@ def change_todo_data(request):
         target_todo_obj.make_status_done()
     
     target_todo_obj.save()
+    excel_output()#excel에 반영
     return HttpResponse("You're looking at question")
 
 def make_wordcloud(text,image_name,width,height):
@@ -342,8 +369,7 @@ def make_wordcloud(text,image_name,width,height):
     taglist=pytagcloud.make_tags(tuple_countnoun)
     pytagcloud.create_tag_image(taglist,image_name,size=(width,height),fontname='Nanum Gothic',rectangular=False)
     
-
-def excel_output(project_name):
+def excel_output():
     wbk = xlwt.Workbook()
     sheet = wbk.add_sheet('project')
     
@@ -373,7 +399,7 @@ def excel_output(project_name):
     contents_style = xlwt.easyxf(contents_style_string)
     title_style = xlwt.easyxf(title_style_string)
     sheet.insert_bitmap('..//KoreanTypeAgile/startPage/static/image/logo.bmp', 0, 0)
-    sheet.write(1, 2, project_name , style=title_style)
+    sheet.write(1, 2, 'project name', style=title_style)
     sheet.write(7, 0, '이름', style=top_style )
     sheet.write(7, 1, '시작 일', style=top_style)
     sheet.write(7, 2, '마감 예상일', style=top_style)
@@ -386,8 +412,7 @@ def excel_output(project_name):
     
     
     i = 8
-    todos = Todo.objects.filter(project_name=project_name).values('todoName','todoContents','startDate','endDate','person_created')
-    print(todos)
+    todos = Todo.objects.all()
     for todo in todos:
         sheet.write(i, 0, todo.person_created, name_style)
         sheet.write(i, 1, todo.startDate.strftime("%Y-%m-%d %H:%M:%S"),contents_style)
