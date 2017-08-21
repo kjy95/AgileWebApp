@@ -2,11 +2,52 @@
 
 {% block content %}
 {% load staticfiles %}
-   
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
    {% if projects %}
+  
+    <style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .desc {
+        padding: 15px;
+        text-align: center;
+    }
+    </style>
+    </head>
+
+
+<div class="dropdown">
+  <img src"{% static 'image/wordcloud.jpg' %}" alt="wordcloud" width="100" height="100">
+  <div class="dropdown-content">
+    <img src="{% static 'image/wordcloud.jpg' %}" alt="Trolltunga Norway" width="300" height="200">
+    <div class="desc">워드클라우드</div>
+  </div>
+</div>
+
+
+<!-- 소스펌 -->
+
         <div class="wordcloud">
         <img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">
-        <!--<img name="brain_struct" src="{% static 'image/brain_struct.jpg' %}">-->
         </div> 
         <table class="table table-bordered" id = "todoTable">
         <thead>
