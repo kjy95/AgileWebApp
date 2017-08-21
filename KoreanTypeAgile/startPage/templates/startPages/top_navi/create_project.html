@@ -5,7 +5,7 @@
    
     <h1>create project</h1>
     <p>Which project are you going to make?</p>
-    <form class="" action="send_project_submit" method="post">
+    <form name="p_form" class="" action="send_project_submit" method="post">
             <div>projectName</div> 
             <input type="text" name="big_project_name" class="form-control" id = text></input>  
             <div>contents</div>
@@ -13,14 +13,23 @@
             Team member</br>
             <button onclick="return Popup()" type = "" name="search" class="btn btn-info" id = button>검색하기</button>
             {% csrf_token %}
-            <form name="p_form">
-                팀원1<input type="text" id="p_txt0">
-                팀원2<input type="text" id="p_txt1">
-                팀원3<input type="text" id="p_txt2">
-                팀원4<input type="text" id="p_txt3">
-            </form>
-            </br></br></br>
-            <button type = "" name="submit" class="btn btn-info" id = button>CREATE PROJECT</button>
+            팀원1<input type="text" name="member1" id="p_txt0">
+            팀원2<input type="text" name="member2" id="p_txt1">
+            팀원3<input type="text" name="member3" id="p_txt2">
+            팀원4<input type="text" name="member4" id="p_txt3">
+            </br>추가적인 팀원은 후에 '프로젝트 관리' 탭에서 설정이 가능합니다.
+            </br></br>
+            주기를 설정합니다.
+            <select name="cycle">
+                <option value="5">5일</option>
+                <option value="6">6일</option>
+                <option value="7" selected="selected">7일</option>
+                <option value="8">8일</option>
+                <option value="9">9일</option>
+                <option value="10">10일</option>
+            </select>
+            </br>
+            <button type = "submit" name="submit" class="btn btn-info" id = button>CREATE PROJECT</button>
      </form>
     <script type="text/javascript">
         function Popup(){

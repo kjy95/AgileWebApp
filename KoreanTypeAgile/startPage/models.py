@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 
@@ -17,12 +18,14 @@ class Project(models.Model):
     project_leader = models.CharField(max_length=40, default='')
     project_member = models.CharField(max_length=40, default='')
     project_contents = models.CharField(max_length=40, default='')
+    project_Cycle=models.IntegerField(default=7,validators=[MaxValueValidator(10), MinValueValidator(5)])
 
     def __str__(self):
         return self.big_project_name
 
 
 class Todo(models.Model):
+    project_week=models.IntegerField(default=1)
     project_name = models.CharField(max_length=40, default='')
     todoName = models.CharField(max_length=40, default='')
     todoContents = models.CharField(max_length=40, default='')
@@ -61,6 +64,7 @@ class Todo(models.Model):
         return self.todoName
 
 class Issue(models.Model):
+    project_week=models.IntegerField(default=1)
     project_name = models.CharField(max_length=40, default='')
     issue_name = models.CharField(max_length=40)
     issue_contents = models.CharField(max_length=40)
@@ -69,6 +73,7 @@ class Issue(models.Model):
 
     
 class Brainstorm(models.Model):
+    project_week=models.IntegerField(default=1)
     project_name=models.CharField(max_length=40)
     ideas=models.TextField()
     def __str__(self):
