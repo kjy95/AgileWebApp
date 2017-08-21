@@ -99,7 +99,8 @@ def sendTodoSubmit(request):
 
     while tempCount < maxCount:
         if projectNameCount >= tempCount and contentsCount >= tempCount : 
-            todoSaveForm( todoName = projectNameArray[tempCount],
+            todoSaveForm( 
+                todoName = projectNameArray[tempCount],
                         person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
@@ -107,7 +108,8 @@ def sendTodoSubmit(request):
         #todo - error
         elif projectNameCount >= tempCount and contentsCount < tempCount :
             if contentsCount == -1 :
-                todoSaveForm( todoName = projectNameArray[tempCount],
+                todoSaveForm(
+                     todoName = projectNameArray[tempCount],
                         person_created = create_user,
                         todoContents = "",
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
@@ -115,7 +117,8 @@ def sendTodoSubmit(request):
                         
             else:
 
-                todoSaveForm(todoName = projectNameArray[tempCount],
+                todoSaveForm(
+                    todoName = projectNameArray[tempCount],
                             person_created = create_user,
                             todoContents = contentsArray[contentsCount],
                             startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
@@ -123,13 +126,15 @@ def sendTodoSubmit(request):
 
         elif projectNameCount < tempCount and contentsCount >= tempCount :
             if projectNameCount == -1 :
-                todoSaveForm(todoName = "",
+                todoSaveForm(
+                    todoName = "",
                              person_created = create_user,
                             todoContents = contentsArray[tempCount],
                             startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
                             endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])))
             else:
-                todoSaveForm(todoName = projectNameArray[projectNameCount],
+                todoSaveForm(
+                    todoName = projectNameArray[projectNameCount],
                         person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
@@ -138,7 +143,8 @@ def sendTodoSubmit(request):
 
         tempCount = tempCount + 1
         
-    todoSaveForm(todoName = projectNameArray[tempCount],
+    todoSaveForm(
+        todoName = projectNameArray[tempCount],
                          person_created = create_user,
                         todoContents = contentsArray[tempCount],
                         startDate = datetime.datetime(int(startDateArray[0]),int(startDateArray[1]),int(startDateArray[2]), int(startTimeArray[0]), int(startTimeArray[1])),
