@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^signUpPage', views.signUpPage), 
     url(r'^Signin', views.Signin),
     url(r'^planMainPage/(?P<project_name>.+)/$', views.planMainPage_project),
+    url(r'^homepage/(?P<project_name>.+)/$', views.homepage_project),
     url(r'^planMainPage', views.planMainPage),
     url(r'^popup_invite_team',views.popup_invite_team),
     url(r'^todoPopUp', views.todoPopUp),

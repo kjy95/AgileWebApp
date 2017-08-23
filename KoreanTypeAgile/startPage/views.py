@@ -18,7 +18,7 @@ def signUpPage(request):
     return render(request, 'startPages/signUpPage.html')
 def planMainPage_project(request,project_name):
     request.session['project_name']=project_name
-    todos = Todo.objects.filter(project_name=project_name).values('todoName','todoContents','startDate','endDate')
+    todos = Todo.objects.filter(project_name=project_name)
     context = {'todos' : todos}
     return render(request, 'startPages/left_navi/planMainPage.html', context)
 def planMainPage(request):
@@ -66,10 +66,12 @@ def send_project_submit(request):
                     project_Cycle=project_cycle)
         project.save()
                         
-    projects = Project.objects.filter(project_member=project_leader).values('project_name','project_contents');
+    projects = Project.objects.filter(project_member=project_leader).values('project_name','project_contents')
     context = {'projects' : projects}
     request.session['member_count'] = 0
     return render(request, 'startPages/top_navi/homepage.html', context)
+
+
 def sendTodoSubmit(request):
     projectName = request.POST['projectName']
     contents = request.POST['contents']
@@ -188,16 +190,70 @@ def homepage(request):
         output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
         try:
             os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
-            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',1200,300)
             os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
         except:#삭제할 파일이 없는경우 == 처음으로 brainstorming 을 입력했을 경우    
-            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',530,300)
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',1200,300)
             os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
             
         request.session['flag'] = 0
-    projects = Project.objects.filter(project_member=userid).values('project_name','project_contents');
-    context = {'projects' : projects}
+    project_week=1
+    for i in range(10):
+        isvaild=Brainstorm.objects.filter(project_week=i+1).exists()
+        if isvaild is True : pass
+        else : 
+            project_week=i
+            break
+    week_list=[]
+    for i in range(project_week):
+        week_list.append(i+1)       
+    projects = Project.objects.filter(project_member=userid).values('project_name','project_contents')
+    context = {'projects' : projects, 'week_list' : week_list}
     return render(request, 'startPages/top_navi/homepage.html', context)
+
+
+def homepage_project(request,project_name):
+    userid=request.session['userid']
+    member_cnt=0
+    context=Project.objects.filter(project_name=project_name).values('project_member','project_name')
+    context_list = [entry for entry in context] # userinfo를 list로 바꿔주는 코드    
+    context_dict={}
+    for user in context_list:#list를 dict로 바꿔주는 for문 입니다. 
+        for items in user :
+           value=user[items]
+           context_dict[items]=value
+
+
+    project_week=1
+    for i in range(10):
+        isvaild=Brainstorm.objects.filter(project_name=project_name,project_week=i+1).exists()
+        if isvaild is True : pass
+        else : 
+            project_week=i
+            break
+    week_list=[]
+    for i in range(project_week):
+        week_list.append(i+1)    
+
+    project_emails=Project.objects.filter(project_name=project_name).values('project_member')
+    members_name=[]
+    for email in project_emails:
+        for name in email :
+            temp=User.objects.filter(email=email[name]).values('name')
+            member_cnt+=1
+            temp_list= [entry for entry in temp]
+            temp_dict= {}
+            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
+                for name in temp :
+                    value=temp[name]
+                    temp_dict[name]=value
+                    members_name.append(temp_dict)
+    project_names=Project.objects.filter(project_member=userid).values('project_name')
+    context_dict['projects']=project_names
+    context_dict['week_list']=week_list
+    context_dict['members_name']=members_name
+    context_dict['member_cnt']=member_cnt
+    return render(request, 'startPages/top_navi/homepage.html', context_dict)
 def profile(request):
     userid=request.session['userid']
     #로그인 할때 저장한 session 을 불러서 userid 에 저장 해줍니다. userid 에는 로그인한 email이 저장 됩니다.
@@ -286,7 +342,8 @@ def Signin(request):
             
             projects = Project.objects.all()
             request.session['userid']=input_email
-            request.session['flag'] = 1
+            request.session['flag'] = 0
+            request.session.set_expiry(0)
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
             projects = Project.objects.filter(project_member=input_email).values('project_name','project_contents');

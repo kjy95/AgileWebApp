@@ -5,13 +5,12 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-
-   {% if projects %}
-  
     <style>
     .dropdown {
         position: relative;
         display: inline-block;
+        left:80%;
+        top:0%;
     }
 
     .dropdown-content {
@@ -31,10 +30,44 @@
         padding: 15px;
         text-align: center;
     }
+    #week_table{
+        text-align:center;
+        margin-top:-8.23%;
+        margin-left:15.15%;
+        width:15%;
+        position: relative;
+        
+    }
+    #member_table{
+        width:55%;
+        margin-left:30%;
+        border: 1px outset whitesmoke;
+    }
+    #link{
+        position: absolute;
+        width:100%;
+        top:20%;
+        left:10%;
+        color:black;
+    }
+    #no_project{
+        position: relative;
+        left:30%;
+        width:70%;
+    }
+    #create_project{
+        position: relative;
+        left:45%;
+    }
+    #create_project_exist{
+        position: relative;
+        left:80%;
+        bottom:30%;
+    }
     </style>
     </head>
 
-
+<!-- 가져다가 놨을떄 확대기능 
 <div class="dropdown">
   <img src"{% static 'image/wordcloud.jpg' %}" alt="wordcloud" width="100" height="100">
   <div class="dropdown-content">
@@ -42,30 +75,57 @@
     <div class="desc">워드클라우드</div>
   </div>
 </div>
+< 소스펌 -->
+<!-- 20170823 소스 테스트-->
 
-
-<!-- 소스펌 -->
-
-        <div class="wordcloud">
-        <img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">
-        </div> 
-        <table class="table table-bordered" id = "todoTable">
-        <thead>
-        <tr>
-            <td><B>PJ name</B></td> 
-            <td><B>contents</B></td>
-        </tr>
-        </thead>
-        <tbody>
-          {% for project in projects %}
-        <tr>
-            <td><a href = "planMainPage/{{project.project_name}}/"> {{project.project_name}}</td></a>
-            <td> {{project.project_contents}} </td>
-        </tr>
-          {% endfor %}
-        </tbody>
-
-    </table>
-   {% endif %}
-    <a href="create_project" button  type="button" class="btn btn-info">CREATE PROJECT</button>
+<!-- 20170823 소스테스트 끝-->
+    {% if projects %}
+        <a href="/create_project" button type="button" class="btn btn-info" id="create_project_exist">CREATE PROJECT</button></a>
+        </br></br></br>
+        <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                프로젝트 리스트
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    {% for project in projects %}
+                        <li><a href="/homepage/{{project.project_name}}/"><option selected>{{project.project_name}}</option></a></li>
+                    {% endfor %}
+                </ul>
+        </div>
+        {% if member_cnt %}
+            <h1 id="link"><a id="link" href="/planMainPage/{{project.project_name}}/">{{project_name}}</a></h1>
+            <div class="wordcloud">
+                <!--<img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">-->
+            </div>
+            <table id="member_table" >
+                <tr>
+                    <th>Member</th>
+                    {% for member in members_name %}
+                        <tr>
+                            <td>{{member.name}}</td>
+                        </tr>
+                    {% endfor %}
+                </tr>
+            <table class="table table-bordered" id="week_table">
+                <tr>
+                    <th width="20%;">Week</th>
+                </tr>
+                {% for week in week_list %}
+                    <tr>
+                        <td>{{week}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            
+        
+            
+        {% endif %}
+       
+    {% endif %}
+    {% if not projects %}
+            <h1 id="no_project">프로젝트가 없습니다. </br>새로운 프로젝트를 만들어 보세요.</h1>
+        </br></br>
+        <a href="/create_project" button type="button" class="btn btn-info" id="create_project">CREATE PROJECT</button></a>
+    {% endif %}
 {% endblock content %}
