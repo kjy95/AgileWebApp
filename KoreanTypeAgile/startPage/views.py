@@ -558,9 +558,6 @@ def chart(project_name, create_user):
     # py.plot(fig, filename= 'shaded_lines')
     
 def weekend_report(request): 
-    return render(request, 'startPages/left_navi/weekend_report.html')  
-
-def chart_in_plotly(request):  
     project_name=request.session['project_name']  
     #create_user
     userid=request.session['userid']
@@ -574,4 +571,7 @@ def chart_in_plotly(request):
     create_user = userinfo_dict["name"]
     #chart함수
     chart(project_name=project_name, create_user = create_user)
+    return render(request, 'startPages/left_navi/weekend_report.html')  
+
+def chart_in_plotly(request):  
     return render(request, 'startPages/left_navi/weekend_report.html')  
