@@ -1,8 +1,8 @@
 {% extends "logged_in_mainpage_base.html" %}
 
-{% block content %}
 {% load staticfiles %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+{% block head %} 
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <style>
@@ -65,8 +65,11 @@
         bottom:30%;
     }
     </style>
-    </head>
+    {% endblock head %}
+{% block content %}
+ 
 
+    
 <!-- 가져다가 놨을떄 확대기능 
 <div class="dropdown">
   <img src"{% static 'image/wordcloud.jpg' %}" alt="wordcloud" width="100" height="100">
@@ -96,7 +99,7 @@
         {% if member_cnt %}
             <h1 id="link"><a id="link" href="/planMainPage/{{project.project_name}}/">{{project_name}}</a></h1>
             <div class="wordcloud">
-                <!--<img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">-->
+                <img name="wordcloud"  src="{% static 'image/wordcloud.jpg' %}">
             </div>
             <table id="member_table" >
                 <tr>
@@ -104,6 +107,7 @@
                     {% for member in members_name %}
                         <tr>
                             <td>{{member.name}}</td>
+                            <td><img src="{% static 'image/plot_image.png' %}" alt="" width="700" height=500"> </td>
                         </tr>
                     {% endfor %}
                 </tr>
