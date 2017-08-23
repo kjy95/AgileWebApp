@@ -574,4 +574,4 @@ def weekend_report(request):
     return render(request, 'startPages/left_navi/weekend_report.html')  
 
 def chart_in_plotly(request):  
-    return render(request, 'startPages/left_navi/weekend_report.html')  
+    return render(request, 'startPages/left_navi/weekend_report.html')   
