@@ -19,7 +19,7 @@ class Project(models.Model):
     project_member = models.CharField(max_length=40, default='')
     project_contents = models.CharField(max_length=40, default='')
     project_Cycle=models.IntegerField(default=7,validators=[MaxValueValidator(10), MinValueValidator(5)])
-
+    project_start_time = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.big_project_name
 

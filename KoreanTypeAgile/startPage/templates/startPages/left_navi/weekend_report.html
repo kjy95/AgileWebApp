@@ -1,9 +1,11 @@
 {% extends "logged_in_page_base.html" %}
 
+{% load staticfiles %}
 {% block content %}
 
    
     <h1 align="center">주간 보고</h1>
-    <p align="center">There is the site which hope for your brilliant paln.</p>
-    
+     <p><a href="/chart_in_plotly" class="btn btn-info" id="chart_in_plotly">자세히 보기</a>
+     <p align="center">There is the site which hope for your brilliant paln.</p>
+     <img src="{% static 'image/plot_image.png' %}" alt="Trolltunga Norway" width="700" height=500">
 {% endblock content %}

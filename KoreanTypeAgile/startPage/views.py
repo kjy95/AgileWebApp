@@ -9,7 +9,10 @@ from os import path
 import datetime,csv,pytagcloud,os
 import matplotlib.pyplot as plt
 import xlwt
-
+import plotly.plotly as py #그래프 만들때 
+from plotly.graph_objs import * #
+import plotly.offline as offline # 
+import plotly.graph_objs as go #
 def index(request): 
     return render(request, 'startPages/index.html')  
 def loginPage(request):
@@ -54,7 +57,7 @@ def send_project_submit(request):
                     project_contents = project_contents,
                     project_leader = project_leader,
                     project_member = project_leader,
-                    project_Cycle=project_cycle)
+                    project_Cycle=project_cycle )
     project.save()
                     
     for i in range(4):
@@ -63,7 +66,7 @@ def send_project_submit(request):
                     project_contents = project_contents,
                     project_leader = project_leader,
                     project_member = project_member[i],
-                    project_Cycle=project_cycle)
+                    project_Cycle=project_cycle )
         project.save()
                         
     projects = Project.objects.filter(project_member=project_leader).values('project_name','project_contents');
@@ -420,3 +423,98 @@ def excel_output():
         sheet.write(i, 4, todo.get_status(), contents_style)
         i += 1
     wbk.save('..//KoreanTypeAgile/startPage/static/document/excel_output.xls') 
+    
+
+def chart(project_name, create_user):
+
+    #현재프로젝트 주기, 생성 시간 가져옴
+    project=Project.objects.filter(project_name=project_name).values()
+    project_Cycle = project[0]["project_Cycle"] 
+    project_start_time = project[0]["project_start_time"]  
+    project_start_date = project_start_time.strftime('%Y-%m-%d') 
+    #todo 가져옴
+    todos = Todo.objects.filter(project_name=project_name, person_created = create_user).values()
+    todo_count = 0
+    do_count = 0
+    done_count = 0
+    all_count = 0
+    for todo in todos:
+        all_count += 1
+        if todo["todo"]:
+            todo_count += 1
+        elif todo["do"]:
+            do_count += 1    
+        elif todo["done"]:
+            done_count += 1 
+    #id/pw in plolt 2@2.com/asdfsadf ### username: chart_image API Key: nvV3Kfu4M2by2Agab3TX
+    py.sign_in('chart_image', 'nvV3Kfu4M2by2Agab3TX') # Replace the username, and API key with your credentials.
+    # Add data
+    month = [project_start_date, 
+    (project_start_time + datetime.timedelta(days=1)).strftime('%Y-%m-%d'), 
+    (project_start_time + datetime.timedelta(days=2)).strftime('%Y-%m-%d'), 
+    (project_start_time + datetime.timedelta(days=3)).strftime('%Y-%m-%d'),
+    (project_start_time + datetime.timedelta(days=4)).strftime('%Y-%m-%d'),
+    (project_start_time + datetime.timedelta(days=5)).strftime('%Y-%m-%d'),
+    (project_start_time + datetime.timedelta(days=6)).strftime('%Y-%m-%d')
+    ]
+    high_2000 = [32.5, 37.6, 49.9, 53.0, 69.1, 75.4, 76.5]
+    low_2000 = [13.8, 22.3, 32.5, 37.2, 49.9, 56.1, 57.7]
+
+    # Create and style traces
+    trace0 = go.Scatter(
+        x = month,
+        y = high_2000,
+        name = 'High 2014',
+        line = dict(
+            color = ('rgb(205, 12, 24)'),
+            width = 4)
+    )
+    trace1 = go.Scatter(
+        x = month,
+        y = low_2000,
+        name = 'Low 2014',
+        line = dict(
+            color = ('rgb(22, 96, 167)'),
+            width = 4,)
+    )
+
+    data = [trace0, trace1]
+
+    # Edit the layout
+    layout = dict(title = 'Burndown Chart',
+                xaxis = dict(title = 'Date'),
+                yaxis = dict(title = '성취율'),
+                )
+
+    fig = dict(data=data, layout=layout)
+    py.iplot(fig, filename='styled-line')
+    try:
+        os.remove('..//KoreanTypeAgile/startPage/static/image/plot_image.png')
+        py.image.save_as(fig,'..//KoreanTypeAgile/startPage/static/image/plot_image.png')
+    except: 
+        py.image.save_as(fig,'..//KoreanTypeAgile/startPage/static/image/plot_image.png')
+    # Image('..//KoreanTypeAgile/startPage/static/image/plot_image.png') # Display a static image
+    
+    # offline.plot(fig,
+    #          auto_open=True, image = 'png', image_filename='..\\KoreanTypeAgile\startPage\\static\image\plot_image' ,
+    #          output_type='file', image_width=800, image_height=600, filename='..//KoreanTypeAgile/startPage/static/document/plot_chart.html', validate=False)
+    # py.plot(fig, filename= 'shaded_lines')
+    
+def weekend_report(request): 
+    return render(request, 'startPages/left_navi/weekend_report.html')  
+
+def chart_in_plotly(request):  
+    project_name=request.session['project_name']  
+    #create_user
+    userid=request.session['userid']
+    userinfo=User.objects.filter(email=userid).values('name')
+    userinfo_list = [entry for entry in userinfo]  
+    userinfo_dict={}
+    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
+        for items in user :
+           value=user[items]
+           userinfo_dict[items]=value
+    create_user = userinfo_dict["name"]
+    #chart함수
+    chart(project_name=project_name, create_user = create_user)
+    return render(request, 'startPages/left_navi/weekend_report.html')  
