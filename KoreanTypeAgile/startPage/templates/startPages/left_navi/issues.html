@@ -1,9 +1,40 @@
+
 {% extends "logged_in_page_base.html" %}
 
 {% block content %}
 
-   
-    <h1>issues page</h1>
-    <p>There is the site which hope for your brilliant paln.</p>
+    <h1>Issues</h1>
+    <table class="type10" id = "todoTable">
+        <thead>
+
+          <th scope="cols">제목</th>
+          <th scope="cols">타입</th>
+          <th scope="cols">우선순위</th>
+          <th scope="cols">생성일</th>
+
+        </thead>
+        <tbody>
+       
+ 
+        
+        <tr>
+
+         {% for issue in issues %}
+         
+          <th scope="row" class="even">{{issue.issue_name}}</th>
+          <th scope="row" class="even">{{issue.issue_type}}</th>
+          <th scope="row" class="even">{{issue.issue_priority}}</th>
+          <td scope="row" class="even">{{issue.issue_create}}</th>
+
+        
+        </tr>
+  
+        {% endfor %}
+        
+        
+        </tbody>
+    </table>
+    <a href="add_issues" class="btn btn-info" id="planDivision">add issue</a> 
     
 {% endblock content %}
+
