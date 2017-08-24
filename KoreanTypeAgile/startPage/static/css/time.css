@@ -1,0 +1,33 @@
+table.type10 {
+    border-collapse: collapse;
+    line-height: 1.5;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin: 20px 10px;
+
+}
+table.type10 thead th {
+    width: 600px;
+    padding: 10px;
+    font-weight: bold;
+    vertical-align: top;
+    color: #fff;
+    background: #9966ff;
+    margin: 20px 10px;
+
+}
+
+table.type10 td {
+    width: 350px;
+    padding: 10px;
+    vertical-align: top;
+}
+table.type10 .even {
+    width: 400px;
+    background: #fdf3f5;
+}
+
+
+.cols .row {
+     text-align: center;
+}

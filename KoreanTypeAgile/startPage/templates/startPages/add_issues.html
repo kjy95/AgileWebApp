@@ -1,0 +1,37 @@
+
+{% extends "logged_in_page_base.html" %}
+
+{% block content %}
+
+    <h1>Add Issue</h1> 
+    <form class="" action="issues" method="post">
+            
+            <div>제목</div> 
+            <input type="text" class="form-control" name="issue_name" id = text></input> 
+            
+            <div>
+            <h5>타입</h5> 
+            
+            <select class="selectpicker" name = "issue_type" id = text>
+                <option>오류</option>
+                <option>궁금하점</option>
+                <option>좋아진 점</option>
+            </select>
+
+            
+            <h5>우선 순위</h5>
+            <select class="selectpicker" name = "issue_priority" id = text>
+                <option>낮음</option>
+                <option>중간</option>
+                <option>높음</option>
+            </select>
+            </div>
+            <div>내용</div> 
+            <textarea name="issue_contents" class="form-control" rows="10" id = textField> </textarea>
+
+
+            {% csrf_token %}
+            <button type = "" class="btn btn-info" name="submit" id = button>submit</button>
+        </form>
+    
+{% endblock content %}

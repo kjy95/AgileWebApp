@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import User, Todo, Project, Brainstorm
+from .models import User, Todo, Project, Brainstorm, Issue
 from konlpy.tag import Twitter
 from collections import Counter
 from os import path
@@ -246,8 +246,14 @@ def search(request):
     
     return render(request, 'startPages/left_navi/search.html')    
 def timeline(request):
-   
-    return render(request, 'startPages/left_navi/timeline.html')    
+
+    todos = Todo.objects.all()
+    brains = Brainstorm.objects.all()
+    issues = Issue.objects.all()
+    context = {'todos' : todos, "brains":brains, "issues":issues}
+
+    return render(request, 'startPages/left_navi/timeline.html', context) 
+ 
 def backlog(request):
     return render(request, 'startPages/left_navi/backlog.html')    
 def kanban(request):
@@ -619,3 +625,41 @@ def weekend_report(request):
 
 def chart_in_plotly(request):  
     return render(request, 'startPages/left_navi/weekend_report.html')   
+
+
+def add_issue(request):
+
+    issue_name = request.POST.get('issue_name', '')
+    issue_contents = request.POST.get('issue_contents', '')
+    issue_type = request.POST.get('issue_type', '')
+    issue_severity = request.POST.get('issue_severity', '')
+    issue_priority = request.POST.get('issue_priority', '')
+    issue_status = request.POST.get('issue_status', '')
+    issue_create = request.POST.get('issue_create', '')
+
+    issue = Issue(
+                issue_name = issue_name,
+                issue_contents = issue_contents,
+                issue_type = issue_type,
+                issue_severity = issue_severity,
+                issue_priority = issue_priority,
+                issue_status = issue_status,)
+                
+                        
+    issue.save()
+    issues = Issue.objects.all()
+
+    context = {'issues' : issues}
+    return render(request, 'startPages/add_issues.html', context)
+
+
+def add_issue_submit(request):
+
+    issues = Issue.objects.all()
+    context = {'issues' : issues}
+    return render(request, 'startPages/left_navi/issues.html', context)
+
+
+
+
+

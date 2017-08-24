@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^timeline', views.timeline),
     url(r'^backlog', views.backlog),
     url(r'^kanban', views.kanban),
-    url(r'^issues', views.issues),
+    url(r'^addissues', views.add_issue_submit),
     url(r'^wiki', views.wiki),
     url(r'^team', views.team),
     url(r'^homepage', views.homepage),
@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^excel_output',views.excel_output),
     url(r'^weekend_report',views.weekend_report),
     url(r'^chart_in_plotly',views.chart_in_plotly),
+    url(r'^issues',views.add_issue),
     
 ]
