@@ -62,7 +62,7 @@ ex ) JPype1-0.6.2-cp36-cp36m-win_amd64 --> JPype1 0.62버젼, cp36 --> python 3.
 <<<<<<<20170811 황규도>>>>>>>
 7. 엑셀 output
 http://www.hanul93.com/openpyxl-basic/
-위 사이트를 따라 oenpyxl설치
+위 사이트를 따라 openyxl설치
 import xlwt
 -https://pypi.python.org/pypi/xlwt 
 -위 홈페이지에서 최신 버전의 xlwt를 다운로드하고
