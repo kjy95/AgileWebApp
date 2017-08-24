@@ -12,32 +12,35 @@
         <tbody>
         {% if todos %}
         {% for todo in todos %}
+        {% if todo.todoname != False %}
 
         
         <tr>
           <th scope="row" class="even">백로그에서 {{todo.todoName}}이 생성 되었습니다!!</th>
           <td class="even">{{todo.updated_at}}</td>
         </tr>
-        
+        {% endif %}
         {% endfor %}
 
         {% for brain in brains %}
-
+        {% if brain.projectname != False %}
         
         <tr>
           <th scope="row" class="even">브래인스토밍에서 {{brain.project_name}}이 생성 되었습니다!!</th>
           <td class="even">{{brain.updated_at}}</td>
         </tr>
-        
+        {% endif %}
         {% endfor %}
 
         {% for issue in issues %}
-        
+        {% if issue.issue_name != "False" %}
+        {% if issue.issue_name != "" %}
         <tr>
           <th scope="row" class="even">이슈에서 {{issue.issue_name}}이 생성 되었습니다!!</th>
           <td class="even">{{issue.issue_create}}</td>
         </tr>
-        
+        {%endif%}
+        {% endif %}
         {% endfor %}
         
         
