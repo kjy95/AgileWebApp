@@ -72,6 +72,9 @@ class Issue(models.Model):
     person_created = models.CharField(max_length=40)
     commit = models.CharField(max_length=40)
 
+class Wiki(models.Model):
+    bookmark_listname = models.CharField(max_length=10, default='')
+
     
 class Brainstorm(models.Model):
     project_week=models.IntegerField(default=1)
@@ -79,5 +82,4 @@ class Brainstorm(models.Model):
     ideas=models.TextField()
     def __str__(self):
         return self.project_name
-
 

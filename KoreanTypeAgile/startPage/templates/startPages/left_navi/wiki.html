@@ -1,9 +1,55 @@
 {% extends "logged_in_page_base.html" %}
+{% load staticfiles %}
 
 {% block content %}
 
-   
-    <h1>wiki page</h1>
-    <p>There is the site which hope for your brilliant paln.</p>
-    
+	<div class="w3-sidebar w3-bar-block w3-card-2" style="display: none;" id="mySidebar">
+		<button class="w3-button w3-bar-item w3-xlarge" onclick="w3_close()">닫기 x</button>
+  		<h3 class="w3-bar-item"></h3>
+  		<a href="wiki" class="w3-bar-item w3-button">Main Page</a>
+  		<div>
+		<a href title="목록 추가" class="add-button w3-bar-item w3-button">
+			<image class="add-icon" src="{% static 'image/add-icon.png' %}"></image>
+			<span>목록 추가</span>
+		</a>
+		</div>
+	</div>
+
+	<div class="w3-main" id="main">
+
+	<div class="w3-teal">
+  		<button class="w3-button w3-teal w3-xlarge" 
+  		onclick="w3_open()">☰</button>
+  		<div class="w3-container">
+    		<h1>WIKI</h1>
+  		</div>
+	</div>
+	
+
+	<div class="w3-container">
+		<h1>
+		{% for project in projects %}
+		{{ project.big_project_name }}
+		{% endfor %}
+
+		<span style="color: green; margin-left: 10px;">WIKI</span>
+		</h1>
+
+
+	</div>
+	</div>
+
+	<script type="text/javascript">
+	function w3_open() {
+  		document.getElementById("main").style.marginLeft = "25%";
+  		document.getElementById("mySidebar").style.width = "20%";
+  		document.getElementById("mySidebar").style.display = "block";
+  		document.getElementById("openNav").style.display = 'none';
+	}
+	function w3_close() {
+  		document.getElementById("main").style.marginLeft = "0%";
+  		document.getElementById("mySidebar").style.display = "none";
+  		document.getElementById("openNav").style.display = "inline-block";
+	}
+	</script>
 {% endblock content %}
