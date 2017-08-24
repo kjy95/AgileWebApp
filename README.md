@@ -9,7 +9,7 @@ powershell에서 django-messages-master 디렉토리로 이동후 아래 설치�
 https://github.com/arneb/django-messages
 설치법 : 
 http://django-messages.readthedocs.io/en/latest/install.html
-<<<<< messages 모듈은 이제 github에 같이 올라가 있습니다 다운받으실 필요는 없고, 설치만 해주시면 딥니다>>>>>
+<<<<< messages 모듈은 이제 github에 같이 올라가 있습니다 다운받으실 필요는 없고, 설치만 해주시면 됩니다>>>>>
 Konlpy(한국어 정보처리 모듈, 문자열에서 명사를 추출 수 있는 모듈) 설치하기 
 본 모듈은, wordcloud 를 생성할 때, 명사만을 추출해서 진행을 하기 때문에 설치해줍니다.
 0. 비트수를 모두 맞추어 주셔야 합니다. (가끔 'python이 중지되었습니다' 하고 서버가 자동으로 꺼집니다)
@@ -60,10 +60,13 @@ ex ) JPype1-0.6.2-cp36-cp36m-win_amd64 --> JPype1 0.62버젼, cp36 --> python 3.
  http://davincii.tistory.com/entry/matplotlib-import-%EC%8B%9C-%EC%97%90%EB%9F%AC-%EB%B0%9C%EC%83%9D-%EB%8C%80%EC%B2%98%EB%B0%A9%EB%B2%95
  matplotlib 에서 생기는 오류 해결방법.
 <<<<<<<20170811 황규도>>>>>>>
-7. 
+7. 엑셀 output
 http://www.hanul93.com/openpyxl-basic/
 위 사이트를 따라 oenpyxl설치
 import xlwt
 -https://pypi.python.org/pypi/xlwt 
 -위 홈페이지에서 최신 버전의 xlwt를 다운로드하고
 -pip install xlwt
+8. 차트, 차트 이미지 추출
+pip install plotly --upgrade
+pip install ipython

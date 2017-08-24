@@ -27,4 +27,7 @@ urlpatterns = [
     url(r'^brain_storming',views.brain_storming),
     url(r'^change_todo_data',views.change_todo_data),
     url(r'^excel_output',views.excel_output),
+    url(r'^weekend_report',views.weekend_report),
+    url(r'^chart_in_plotly',views.chart_in_plotly),
+    
 ]
