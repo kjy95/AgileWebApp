@@ -64,3 +64,22 @@ class Issue(models.Model):
     issue_contents = models.CharField(max_length=40)
     person_created = models.CharField(max_length=40)
     commit = models.CharField(max_length=40)
+
+class Wiki(models.Model):
+    bookmark_listname = models.CharField(max_length=10, default='')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

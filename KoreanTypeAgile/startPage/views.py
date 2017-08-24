@@ -199,4 +199,9 @@ def Signin(request):
 def brain_stroming(request):
     return render(request,'startPages/left_navi/brain_stroming.html')
 
+def wiki(request):
+    projects = Project.objects.all()
+    context = {'projects': projects }
+    return render(request, 'startPages/left_navi/wiki.html', context)
+
     
