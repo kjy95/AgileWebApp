@@ -290,7 +290,24 @@ def issues(request):
 def wiki(request):
     return render(request, 'startPages/left_navi/wiki.html')    
 def team(request):
-    return render(request, 'startPages/left_navi/team.html')    
+    project_name=request.session['project_name']
+    team_emails=Project.objects.filter(project_name=project_name).values('project_member')
+    #<QuerySet [{'project_member': 'email@email.com'}, >
+    team_names=[]
+    member_cnt=0
+    for email in team_emails:
+        for name in email :
+            temp=User.objects.filter(email=email[name]).values('name')
+            member_cnt+=1
+            temp_list= [entry for entry in temp]
+            temp_dict= {}
+            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
+                for name in temp :
+                    value=temp[name]
+                    temp_dict[name]=value
+                    team_names.append(temp_dict)
+    
+    return render(request, 'startPages/left_navi/team.html',{'member_cnt':member_cnt,'team_names':team_names})    
 def popup_invite_team(request):
     count=request.session['member_count']
     member=request.POST.get('project_member',None)
@@ -346,7 +363,7 @@ def Signin(request):
             projects = Project.objects.all()
             request.session['userid']=input_email
             request.session['flag'] = 0
-            request.session.set_expiry(0)
+            #request.session.set_expiry(0)
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
             projects = Project.objects.filter(project_member=input_email).values('project_name','project_contents');
@@ -371,10 +388,10 @@ def brain_storming(request):
         temp=Brainstorm(ideas=idea,project_name=project_name)
         temp.save()
         request.session['flag'] = 1
-        content=Brainstorm.objects.filter(project_name=project_name).values();
+        content=Brainstorm.objects.filter(project_name=project_name).values()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
     else :# 입력하지 않은 경우 or 처음 실행시킨 경우
-        content=Brainstorm.objects.filter(project_name=project_name).values();
+        content=Brainstorm.objects.filter(project_name=project_name).values()
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
 
