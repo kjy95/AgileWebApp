@@ -607,17 +607,7 @@ def chart_in_plotly(request):
     return render(request, 'startPages/left_navi/weekend_report.html')   
 
 
-def add_issue_submit(request):
-
-    userid=request.session['userid']
-    userinfo=User.objects.filter(email=userid).values('name')
-    userinfo_list = [entry for entry in userinfo]  
-    userinfo_dict={}
-    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
-        for items in user :
-           value=user[items]
-           userinfo_dict[items]=value
-    create_user = userinfo_dict["name"]
+def add_issue(request):
 
     issue_name = request.POST.get('issue_name', '')
     issue_contents = request.POST.get('issue_contents', '')
@@ -640,8 +630,16 @@ def add_issue_submit(request):
     issues = Issue.objects.all()
 
     context = {'issues' : issues}
+    return render(request, 'startPages/add_issues.html', context)
+
+
+def add_issue_submit(request):
+
+    issues = Issue.objects.all()
+    context = {'issues' : issues}
     return render(request, 'startPages/left_navi/issues.html', context)
 
 
-def add_issues(request):
-    return render(request, 'startPages/add_issues.html')
+
+
+
