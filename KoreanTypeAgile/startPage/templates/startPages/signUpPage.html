@@ -1,4 +1,4 @@
-{% extends "sign_base.html" %}
+{% extends "base.html" %}
 
 
 {% block content %}
@@ -6,7 +6,7 @@
    
     <div class="entry">
     <div class="container">
-         <div style = "width: 600px; height: 500px; margin: 200px auto;">   
+         <div style = "width: 600px; height: 500px; margin: 140px auto;">   
     <form class="" action="Signup" method="post">
       {% csrf_token %}
       {% for message in messages %}
