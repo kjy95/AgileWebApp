@@ -13,7 +13,7 @@ import plotly.plotly as py #그래프 만들때
 from plotly.graph_objs import * #
 import plotly.offline as offline # 
 import plotly.graph_objs as go #
-def index(request): 
+def index(request):
     return render(request, 'startPages/index.html')  
 def loginPage(request):
     return render(request, 'startPages/loginPage.html')
@@ -179,6 +179,9 @@ def sendTodoSubmit(request):
                         endDate = datetime.datetime(int(endDateArray[0]),int(endDateArray[1]),int(endDateArray[2]),int(endTimeArray[0]),int(endTimeArray[1])),
                         project_name=project_name)
     content_todo=Todo.objects.values('todoContents')
+    userid=request.session['userid']
+    project_name=request.session['project_name']
+    User.objects.filter(email=userid).update(Lastproject=project_name)
  
     todos = Todo.objects.filter(project_name=project_name).values()
     project_name=request.session['project_name']
@@ -189,6 +192,7 @@ def sendTodoSubmit(request):
 def homepage(request):
     wordcloud_flag=request.session['flag']
     userid=request.session['userid']
+    last_pjname=User.objects.filter(email=userid).values('Lastproject')
     if wordcloud_flag is 1 :
         output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
         try:
@@ -200,62 +204,26 @@ def homepage(request):
             os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
             
         request.session['flag'] = 0
-    project_week=1
-    for i in range(10):
-        isvaild=Brainstorm.objects.filter(project_week=i+1).exists()
-        if isvaild is True : pass
-        else : 
-            project_week=i
-            break
-    week_list=[]
-    for i in range(project_week):
-        week_list.append(i+1)       
-    projects = Project.objects.filter(project_member=userid).values('project_name','project_contents')
-    context = {'projects' : projects, 'week_list' : week_list}
+    context=get_lastProject(userid,last_pjname)
     return render(request, 'startPages/top_navi/homepage.html', context)
 
 
 def homepage_project(request,project_name):
     userid=request.session['userid']
-    member_cnt=0
-    context=Project.objects.filter(project_name=project_name).values('project_member','project_name')
-    context_list = [entry for entry in context] # userinfo를 list로 바꿔주는 코드    
-    context_dict={}
-    for user in context_list:#list를 dict로 바꿔주는 for문 입니다. 
-        for items in user :
-           value=user[items]
-           context_dict[items]=value
-
-
-    project_week=1
-    for i in range(10):
-        isvaild=Brainstorm.objects.filter(project_name=project_name,project_week=i+1).exists()
-        if isvaild is True : pass
-        else : 
-            project_week=i
-            break
-    week_list=[]
-    for i in range(project_week):
-        week_list.append(i+1)    
-
-    project_emails=Project.objects.filter(project_name=project_name).values('project_member')
-    members_name=[]
-    for email in project_emails:
-        for name in email :
-            temp=User.objects.filter(email=email[name]).values('name')
-            member_cnt+=1
-            temp_list= [entry for entry in temp]
-            temp_dict= {}
-            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
-                for name in temp :
-                    value=temp[name]
-                    temp_dict[name]=value
-                    members_name.append(temp_dict)
-    project_names=Project.objects.filter(project_member=userid).values('project_name')
-    context_dict['projects']=project_names
-    context_dict['week_list']=week_list
-    context_dict['members_name']=members_name
-    context_dict['member_cnt']=member_cnt
+    wordcloud_flag=request.session['flag']
+    if wordcloud_flag is 1 :
+        output_csv('Brainstorming_idea.csv','ideas') #csv 파일로 아이디어들을 추출합니다.
+        try:
+            os.remove('..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',1200,300)
+            os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+        except:#삭제할 파일이 없는경우 == 처음으로 brainstorming 을 입력했을 경우    
+            make_wordcloud('Brainstorming_idea.csv','wordcloud.jpg',1200,300)
+            os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
+            
+        request.session['flag'] = 0
+    
+    context_dict=get_lastProject(userid,project_name)
     return render(request, 'startPages/top_navi/homepage.html', context_dict)
 def profile(request):
     userid=request.session['userid']
@@ -275,8 +243,10 @@ def create_project(request):
     
     return render(request, 'startPages/top_navi/create_project.html')    
 def search(request):
+    
     return render(request, 'startPages/left_navi/search.html')    
 def timeline(request):
+   
     return render(request, 'startPages/left_navi/timeline.html')    
 def backlog(request):
     return render(request, 'startPages/left_navi/backlog.html')    
@@ -288,6 +258,7 @@ def kanban(request):
 def issues(request):
     return render(request, 'startPages/left_navi/issues.html')    
 def wiki(request):
+    
     return render(request, 'startPages/left_navi/wiki.html')    
 def team(request):
     project_name=request.session['project_name']
@@ -348,6 +319,46 @@ def Signup(request) :
     userdatas=User.objects.all()
     userdatas={'userdatas':userdatas}
     return render(request,'startPages/index.html',userdatas)
+def get_lastProject(userid,last_projectname):
+    member_cnt=0
+    context=Project.objects.filter(project_name=last_projectname).values('project_member','project_name')
+    context_list = [entry for entry in context] # userinfo를 list로 바꿔주는 코드    
+    context_dict={}
+    for user in context_list:#list를 dict로 바꿔주는 for문 입니다. 
+        for items in user :
+           value=user[items]
+           context_dict[items]=value
+    project_week=1
+    for i in range(10):
+        isvaild=Brainstorm.objects.filter(project_name=last_projectname,project_week=i+1).exists()
+        if isvaild is True : pass
+        else : 
+            project_week=i
+            break
+    week_list=[]
+    for i in range(project_week):
+        week_list.append(i+1)    
+
+    project_emails=Project.objects.filter(project_name=last_projectname).values('project_member')
+    members_name=[]
+    for email in project_emails:
+        for name in email :
+            temp=User.objects.filter(email=email[name]).values('name')
+            member_cnt+=1
+            temp_list= [entry for entry in temp]
+            temp_dict= {}
+            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
+                for name in temp :
+                    value=temp[name]
+                    temp_dict[name]=value
+                    members_name.append(temp_dict)
+    project_names=Project.objects.filter(project_member=userid).values('project_name')
+    context_dict['projects']=project_names
+    context_dict['week_list']=week_list
+    context_dict['members_name']=members_name
+    context_dict['member_cnt']=member_cnt
+    return context_dict
+
 
 def Signin(request):
     input_email = request.POST.get('email',None)
@@ -366,8 +377,13 @@ def Signin(request):
             #request.session.set_expiry(0)
             #로그인한 유저를 저장하기 위해 session 에 저장을 해줍니다. 
             # ex ) {'userid' : input_email } 
-            projects = Project.objects.filter(project_member=input_email).values('project_name','project_contents');
-            context = {'projects' : projects}
+            try :
+                last_pjname=User.objects.filter(email=input_email).values('Lastproject')
+            except : 
+                last_pjname=None
+            print(last_pjname)
+            context=get_lastProject(input_email,last_pjname)
+            print(context)
             return render(request,'startPages/top_navi/homepage.html',context)
         
         elif check_password is False : # email 은 일치, password는 불일치
@@ -389,9 +405,14 @@ def brain_storming(request):
         temp.save()
         request.session['flag'] = 1
         content=Brainstorm.objects.filter(project_name=project_name).values()
+        #로그인 했을 떄 보여지는, Lastproject를 저장해주는 코드입니다.
+        userid=request.session['userid']
+        project_name=request.session['project_name']
+        Last_project=User.objects.filter(email=userid)
+        Last_project.update(Lastproject=project_name)
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
     else :# 입력하지 않은 경우 or 처음 실행시킨 경우
-        content=Brainstorm.objects.filter(project_name=project_name).values()
+        content=Brainstorm.objects.filter(project_name=project_name)
         return render(request,'startPages/left_navi/brain_storming.html',{'content':content})
 
 
@@ -442,7 +463,7 @@ def change_todo_data(request):
 def make_wordcloud(text,image_name,width,height):
     list_of_tuple=return_list_of_tuples(text)
     tuple_countnoun=tuple(list_of_tuple)
-    taglist=pytagcloud.make_tags(tuple_countnoun)
+    taglist=pytagcloud.make_tags(tuple_countnoun,maxsize=80,minsize=10)
     pytagcloud.create_tag_image(taglist,image_name,size=(width,height),fontname='Nanum Gothic',rectangular=False)
     
 def excel_output():

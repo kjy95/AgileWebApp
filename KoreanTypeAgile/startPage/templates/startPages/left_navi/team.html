@@ -2,7 +2,15 @@
 {% load staticfiles %}
 {% block content %}
 	
-	
+	<script>
+        function popup(){
+            var popurl="popup_invite_team.html";
+            var popOption = "width=640, height=10, resizable=no, scrollbars=no, status=no;";
+            window.name="pwin";
+            window.open(popurl,"",popOption);
+            return false;
+        }
+    </script>
 	<section class="team-main-layout" style="background: rgb(230, 232, 236); border: 1px solid gray;">
 		<!-- 두 섹션 공통 부분-->
 		<div class="team-sub-layout">
@@ -22,7 +30,7 @@
 
 						<div class="team-menu-space"></div>
 
-						<button type="button" tabindex="-1" class="team-member-plus-button orange"
+						<button onclick="return popup()" type="button" tabindex="-1" class="team-member-plus-button orange"
 						data-toggle="modal" data-target="teamPlus">
 							<div>
 								<i class="team-plus-icon"></i>
@@ -38,7 +46,7 @@
 				<section class="act-team-people-list">
 					<section class="act-team-people-list-container">
 						<div class="act-team-people-list-header">
-							<h3 class="team-member-people-count">멤버 1명</h3>
+							<h3 class="team-member-people-count">멤버 {{member_cnt}}명</h3>
 							<div class="people-list-spacer"></div>
 							<!-- 팀원 검색 부분 -->
 							<div class="act-team-people-list-search">
@@ -125,7 +133,6 @@
 
 
 
-    {{member_cnt}}
 
     {% for name in team_names %}
         {{name.name}}
