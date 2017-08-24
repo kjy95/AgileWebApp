@@ -32,6 +32,7 @@ class Todo(models.Model):
     todoContents = models.CharField(max_length=40, default='')
     startDate = models.DateTimeField()#날짜, 시간을 나타냄, python datetime.datetime 인스턴스로 표현됨
     endDate = models.DateTimeField()
+    updated_at = models.DateTimeField(auto_now=True)
     
     todo = models.BooleanField(default=True)
     do = models.BooleanField(default=False)
@@ -65,18 +66,25 @@ class Todo(models.Model):
         return self.todoName
 
 class Issue(models.Model):
-    project_week=models.IntegerField(default=1)
-    project_name = models.CharField(max_length=40, default='')
-    issue_name = models.CharField(max_length=40)
-    issue_contents = models.CharField(max_length=40)
-    person_created = models.CharField(max_length=40)
-    commit = models.CharField(max_length=40)
+    issue_name = models.CharField(max_length = 40, default = '')
+    issue_contents = models.CharField(max_length = 40)
+    issue_type = models.CharField(max_length = 40)
+    issue_severity = models.CharField(max_length = 40, default = '')
+    issue_priority = models.CharField(max_length = 40, default = '')
+    issue_status = models.CharField(max_length = 40, default = '')
+    issue_create = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return self.issue_name
 
     
 class Brainstorm(models.Model):
     project_week=models.IntegerField(default=1)
     project_name=models.CharField(max_length=40)
     ideas=models.TextField()
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.project_name
 
