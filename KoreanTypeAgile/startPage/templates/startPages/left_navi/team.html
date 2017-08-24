@@ -1,9 +1,128 @@
 {% extends "logged_in_page_base.html" %}
-
+{% load staticfiles %}
 {% block content %}
+	
+	
+	<section class="team-main-layout" style="background: rgb(230, 232, 236); border: 1px solid gray;">
+		<!-- 두 섹션 공통 부분-->
+		<div class="team-sub-layout">
+			<!-- 위쪽 메뉴 부분 -->
+			<div class="team-sub-layout-header">
+				<div>
+					<section class="team-subheader-tab-bar">
+						<span class="team-people-page-filters-header">
+							<div class="team-menu-holder">
+								<a class="team-menu" href="#">활동 중인 멤버</a>
+							</div>
 
-   
-    <h1>team page</h1>
-    <p>There is the site which hope for your brilliant paln.</p>
-    
+							<div class="team-menu-holder">
+								<a class="team-menu" href="#">초대 중인 멤버</a>
+							</div>
+						</span>
+
+						<div class="team-menu-space"></div>
+
+						<button type="button" tabindex="-1" class="team-member-plus-button orange"
+						data-toggle="modal" data-target="teamPlus">
+							<div>
+								<i class="team-plus-icon"></i>
+								<span class="team-plus-button-text">팀원 초대하기</span>
+							</div>
+						</button>
+					</section>
+				</div>
+			</div>
+
+			<div class="team-sub-layout-content">
+				<!-- 현재 활동중인 멤버에 대한 페이지 -->
+				<section class="act-team-people-list">
+					<section class="act-team-people-list-container">
+						<div class="act-team-people-list-header">
+							<h3 class="team-member-people-count">멤버 1명</h3>
+							<div class="people-list-spacer"></div>
+							<!-- 팀원 검색 부분 -->
+							<div class="act-team-people-list-search">
+								<table style="border: 1px solid gray;">
+									<th><img src="{% static 'image/bogi.png'%}" class="search-icon"></th>
+									<th><input type="text" class="team-people-list-search-box" placeholder="이름으로 검색하기"></th>
+								</table>
+								
+							</div>
+						</div>
+					
+
+						<!-- 하단 부분 -->
+						<section class="team-index">
+							<!-- 하단 덮개-->
+							<div class="team-index-container">
+								<!-- 하단 전체 유저 덮개-->	
+								<section class="team-index-item-container">
+									<!-- 팀 유저 목록 부분 -->
+									<div class="team-index-list-section">
+
+										<!-- 누구인지 부분 -->
+										<div class="team-person">
+											<!-- 사람 이미지 덮개 -->
+											<div class="team-person-image-container top-padding">
+												<!-- 유저 이미지 -->
+												<div class="team-person-image">
+													<img src="https://d30795irbdecem.cloudfront.net/assets/default-avatar-4dc02b82.svg" class="team-user-icon">
+													<!-- 유저 온라인 on/off 덮개 -->
+													<div class="team-person-online-container">
+														<!-- 유저 온라인 on/off 상태 -->	
+														<div class="team-person-online-status">
+														
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- 유저 텍스트 관련 부분 -->
+											<div class="team-person-text top-padding">
+												<!-- 이름 부분 -->
+												<span class="team-person-text-name">박준영</span>
+												<!-- 역할 부분 -->
+												<span class="team-person-text-major">개발자</span>
+											</div>
+										</div>
+									</div>
+								</section>
+							</div>
+						</section>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<div class="modal fade" id="teamPlus" tabindex="-1" role="dialog" aria-labelledby="teamPlus" aria-hidden="true">
+  			<div class="modal-dialog">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        					<span aria-hidden="true">&times;</span>
+        				</button>
+        				<h4 class="modal-title" id="exampleModalLabel">New message</h4>
+      				</div>
+      				<div class="modal-body">
+        				<form>
+          					<div class="form-group">
+            					<label for="recipient-name" class="control-label">Recipient:</label>
+            					<input type="text" class="form-control" id="recipient-name">
+          					</div>
+          					<div class="form-group">
+            					<label for="message-text" class="control-label">Message:</label>
+            					<textarea class="form-control" id="message-text"></textarea>
+          					</div>
+        				</form>
+      				</div>
+      				<div class="modal-footer">
+        				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+       					<button type="button" class="btn btn-primary">Send message</button>
+      				</div>
+    			</div>
+  			</div>
+		</div>
+	</section>
+
+
+
 {% endblock content %}

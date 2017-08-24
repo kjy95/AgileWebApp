@@ -543,6 +543,7 @@ def chart(project_name, create_user):
                 yaxis = dict(title = '성취율'),
                 )
 
+
     fig = dict(data=data, layout=layout)
     py.iplot(fig, filename='styled-line')
     try:
@@ -557,6 +558,11 @@ def chart(project_name, create_user):
     #          output_type='file', image_width=800, image_height=600, filename='..//KoreanTypeAgile/startPage/static/document/plot_chart.html', validate=False)
     # py.plot(fig, filename= 'shaded_lines')
     
+def wiki(request):
+    projects = Project.objects.all()
+    context = {'projects': projects }
+    return render(request, 'startPages/left_navi/wiki.html', context)
+  
 def weekend_report(request): 
     project_name=request.session['project_name']  
     #create_user
