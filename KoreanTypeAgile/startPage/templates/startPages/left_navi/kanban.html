@@ -1,5 +1,16 @@
 {% extends "logged_in_page_base.html" %}
 
+{% load staticfiles %}
+{% block head %}
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN -->
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript" script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+<script type="text/javascript" src="{% static 'js/ajax_csrf.js' %}"></script>
+{% endblock head %}
 {% block content %}
 
    
@@ -19,7 +30,7 @@
            {% if todos %}
            {% for todo in todos %}
                {% if todo.todo %}
-                        <article class="kanban-entry grab" id= {{todo.id}} draggable="true">
+                        <article class="kanban-entry grab" id= "{{todo.id}}" draggable="true">
                             <div class="kanban-entry-inner">
                                 <div class="kanban-label">
                                     <h2><a href="#"> {{todo.todoName}}</a> <p>{{todo.startDate}} to {{todo.endDate}}</p></h2>
@@ -27,7 +38,6 @@
                                 </div>
                             </div>
                         </article>
-                        
               {% endif%}
                         
           {% endfor %}
@@ -48,19 +58,26 @@
                 <div class="panel-body">
                     <div id="DOING" class="kanban-centered">
 
-                        <article class="kanban-entry grab" id="item6" draggable="true">
-                            <div class="kanban-entry-inner">
-                                <div class="kanban-label">
-                                    <h2><a href="#">Job Meeting</a></h2>
-                                    <p>You have a meeting at <strong>Laborator Office</strong> Today.</p>
+            {% if todos %}
+            {% for todo in todos %}
+                {% if todo.do %}
+                            <article class="kanban-entry grab" id= "{{todo.id}}" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> {{todo.todoName}}</a> <p>{{todo.startDate}} to {{todo.endDate}}</p></h2>
+                                        <p>{{todo.todoContents}}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                {% endif%}
+                            
+            {% endfor %}
+            {% endif%}
 
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <a href="#">Add a card...</a>
+                    <a href="#">Add a plan...</a>
                 </div>
             </div>
             <!--sütun bitiş-->
@@ -73,19 +90,26 @@
                 <div class="panel-body">
                     <div id="DONE" class="kanban-centered">
 
-                        <article class="kanban-entry grab" id="item6" draggable="true">
-                            <div class="kanban-entry-inner">
-                                <div class="kanban-label">
-                                    <h2><a href="#">Job Meeting</a></h2>
-                                    <p>You have a meeting at <strong>Laborator Office</strong> Today.</p>
+            {% if todos %}
+            {% for todo in todos %}
+                {% if todo.done %}
+                            <article class="kanban-entry grab" id= "{{todo.id}}" draggable="true">
+                                <div class="kanban-entry-inner">
+                                    <div class="kanban-label">
+                                        <h2><a href="#"> {{todo.todoName}}</a> <p>{{todo.startDate}} to {{todo.endDate}}</p></h2>
+                                        <p>{{todo.todoContents}}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
+                            </article>
+                {% endif%}
+                            
+            {% endfor %}
+            {% endif%}
 
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <a href="#">Add a card...</a>
+                    <a href="#">Add a plan...</a>
                 </div>
             </div>
             <!--sütun bitiş-->
@@ -108,9 +132,12 @@
             </div>
         </div>
     </div>
-
-    <script>
-                $(function () {
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript" script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+        <script type="text/javascript">
+        $(function () {
+            
             var kanbanCol = $('.panel-body');
             kanbanCol.css('max-height', (window.innerHeight - 150) + 'px');
 
@@ -123,14 +150,16 @@
                 var $panelBody = $(this).parent().children('.panel-body');
                 $panelBody.slideToggle();
             });
+
         });
 
         function draggableInit() {
             var sourceId;
-
+            var item_id;    
             $('[draggable=true]').bind('dragstart', function (event) {
-                sourceId = $(this).parent().attr('id');
-                event.originalEvent.dataTransfer.setData("text/plain", event.target.getAttribute('id'));
+                sourceId = $(this).parent().attr('id');// ex. todo _ doing _ done
+                event.originalEvent.dataTransfer.setData("text/plain", event.target.getAttribute('id'));//event.target.getAttribute('id') == item id
+                item_id = event.target.getAttribute('id');
             });
 
             $('.panel-body').bind('dragover', function (event) {
@@ -140,12 +169,10 @@
             $('.panel-body').bind('drop', function (event) {
                 var children = $(this).children();
                 var targetId = children.attr('id');
-
                 if (sourceId != targetId) {
                     var elementId = event.originalEvent.dataTransfer.getData("text/plain");
 
                     $('#processing-modal').modal('toggle'); //before post
-
 
                     // Post data 
                     setTimeout(function () {
@@ -154,11 +181,29 @@
                         $('#processing-modal').modal('toggle'); // after post
                     }, 1000);
 
+                    
+
                 }
 
-                event.preventDefault();
+                           
+                 $.ajax({ // ajax를 이용해 views.py 의 change_todo_data함수를 불러오기 위함
+                        type:"POST",
+                        url:"/change_todo_data",
+                        data : {
+                            "todo_id" : item_id,
+                            "target_id" : targetId,
+                            "csrfmiddlewaretoken": "{{ csrf_token }}"
+                        },
+                        success: function(xhr){
+                        },
+                        error: function(xhr, status, error) {
+                            alert(error);
+                            alert(status);
+                        }  
+                    });
+            event.preventDefault();
+             
             });
         }
-
-   </script>
+</script>
 {% endblock content %}

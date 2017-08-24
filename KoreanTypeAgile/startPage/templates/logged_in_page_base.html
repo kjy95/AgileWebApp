@@ -12,6 +12,8 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <!-- Custom CSS -->
     <link href="{% static 'css/logo-nav.css' %}" rel="stylesheet">
+    <link href="{% static 'css/logo-navi-sign.css' %}" rel="stylesheet">
+    {% block head %} {% endblock head %}
 <style>
     
     body{
@@ -47,17 +49,17 @@
 </head>
 <body>
     <ul class="nav nav-pills nav-stacked" id = "left_ul">    
-        <li id = "left_li"><a href="search">search</a></li>
-        <li id = "left_li"><a href="timeline">timeline</a></li>
-        <li id = "left_li"><a href="planMainPage">backlog</a></li>
-        <li id = "left_li"><a href="kanban">kanban</a></li>
-        <li id = "left_li"><a href="issues">issues</a></li>
-        <li id = "left_li"><a href="wiki">wiki</a></li>
-        <li id = "left_li"><a href="team">team</a></li>
-        <li id = "left_li"><a href="brain_stroming">brain stroming</a></li>
-        <li id = "left_li"><a href="admin">admin</a></li>
+        <li id = "left_li"><a href="/search">search</a></li>
+        <li id = "left_li"><a href="/timeline">timeline</a></li>
+        <li id = "left_li"><a href="/planMainPage">backlog</a></li>
+        <li id = "left_li"><a href="/kanban">kanban</a></li>
+        <li id = "left_li"><a href="/issues">issues</a></li>
+        <li id = "left_li"><a href="/wiki">wiki</a></li>
+        <li id = "left_li"><a href="/team">team</a></li>
+        <li id = "left_li"><a href="/brain_storming">brain stroming</li></a>
+        <li id = "left_li"><a href="/weekend_report">weekend report</a></li>
     </ul>
-     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+     <nav style= "background: #a0c0ad; border-color:#a0c0ad" class="navbar navbar-inverse navbar-inversed navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -68,17 +70,17 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="/">
-                    <img src="{% static 'image/fix.jpg' %}" alt="">
+                    <img src="{% static 'image/logo.png' %}" alt="">
                 </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav"> 
                         <li>
-                        <a href="homepage">homepage</a>
+                        <a href="/homepage">homepage</a>
                         </li>
                         <li>
-                            <a href="profile">profile</a>
+                            <a href="/profile">profile</a>
                         </li> 
                 </ul> 
             </div> 

@@ -1,8 +1,9 @@
 {% extends "logged_in_page_base.html" %}
 
+{% load staticfiles %}
 {% block content %}
 
-    <h1>Backlog</h1> 
+    <h1>Backlog</h1> <p><a href="/todoPopUp" class="btn btn-info" id="planDivision">Create Todo</a> <a href="{% static 'document/excel_output.xls' %}" download = "" class="btn btn-info" id="planDivision">Excel output</a> </p>
    {% if todos %}
         <table class="table table-bordered" id = "todoTable">
         <thead>
@@ -28,6 +29,5 @@
 
     </table>
    {% endif %}
-    <a href="todoPopUp" class="btn btn-info" id="planDivision">Create Todo</a> 
    
 {% endblock content %}
