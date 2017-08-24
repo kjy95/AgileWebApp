@@ -17,9 +17,9 @@ body {
 }
 .entry {
     width: 100%;
-    background-image: url("../image/back2.jpg");
+    background-image: url("../image/back4.png");
     background-repeat: no-repeat;
-    background-size: 100% 65%;
+    background-size: 100% 60%;
 }
 .guide{
     position: relative;
