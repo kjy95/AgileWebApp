@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^weekend_report',views.weekend_report),
     url(r'^chart_in_plotly',views.chart_in_plotly),
     url(r'^issues',views.add_issue),
+    url(r'^manage_team',views.manage_team)
     
 ]

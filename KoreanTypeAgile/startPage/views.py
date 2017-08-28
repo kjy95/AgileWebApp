@@ -13,6 +13,63 @@ import plotly.plotly as py #그래프 만들때
 from plotly.graph_objs import * #
 import plotly.offline as offline # 
 import plotly.graph_objs as go #
+def Pjmember_count(project_name):#프로젝트에 속한 멤버(자신포함)를 int 로 return
+    member_cnt=0
+    member_query=Project.objects.filter(project_name=project_name).values('project_member')
+    for entry in member_query:
+        for name in entry :
+            if entry[name] is not "":
+                member_cnt+=1
+    return member_cnt
+
+def Pjweek_list(project_name):#프로젝트가 몇주차까지 되어있는지 list로 return 
+    week_list=[]
+    i=1
+    while(1):
+        week_exist=Brainstorm.objects.filter(project_name=project_name,project_week=i).exists()
+        if week_exist :
+            week_list.append(i)
+            i+=1
+        else : break
+    return week_list
+    
+
+def get_nameBYemail(project_name) : #이름을 dict 형태로 return 해줌. (생성자 포함)
+    project_emails=Project.objects.filter(project_name=project_name).values('project_member')
+    members_name=[]
+    for email in project_emails:
+        for name in email :
+            temp=User.objects.filter(email=email[name]).values('name')
+            temp_list= [entry for entry in temp]
+            temp_dict= {}
+            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
+                for name in temp :
+                    value=temp[name]
+                    temp_dict[name]=value
+                    members_name.append(temp_dict)
+    return members_name
+
+
+def convert_queryTodict(query): #query를 dict로 바꿔서 render함수에 사용할 수 있게 해줌
+    Dict={}
+    List=[entry for entry in query]
+    for entry in List:
+        for item in entry:
+            value=entry[item]
+            Dict[item]=value
+    return Dict
+
+def get_lastProject(userid,last_projectname):
+    context=Project.objects.filter(project_name=last_projectname).values('project_member','project_name')
+    context_dict=convert_queryTodict(context)
+    project_names=Project.objects.filter(project_member=userid).values('project_name')
+    context_dict['projects']=project_names
+    context_dict['week_list']=Pjweek_list(last_projectname)
+    context_dict['members_name']=get_nameBYemail(last_projectname)
+    context_dict['member_cnt']=Pjmember_count(last_projectname)
+    return context_dict
+
+
 def index(request):
     return render(request, 'startPages/index.html')  
 def loginPage(request):
@@ -84,16 +141,8 @@ def sendTodoSubmit(request):
     #create_user
     userid=request.session['userid']
     userinfo=User.objects.filter(email=userid).values('name')
-    userinfo_list = [entry for entry in userinfo]  
-    userinfo_dict={}
-    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
-        for items in user :
-           value=user[items]
-           userinfo_dict[items]=value
+    userinfo_dict=convert_queryTodict(userinfo)
     create_user = userinfo_dict["name"]
-
-    print(create_user)
-    
     maxCount = 0
     projectNameCount = -1
     contentsCount = -1
@@ -222,21 +271,17 @@ def homepage_project(request,project_name):
             os.rename('wordcloud.jpg','..//KoreanTypeAgile/startPage/static/image/wordcloud.jpg')
             
         request.session['flag'] = 0
-    
-    context_dict=get_lastProject(userid,project_name)
+    try:
+        context_dict=get_lastProject(userid,project_name)
+    except :
+        context_dict=None
     return render(request, 'startPages/top_navi/homepage.html', context_dict)
 def profile(request):
     userid=request.session['userid']
     #로그인 할때 저장한 session 을 불러서 userid 에 저장 해줍니다. userid 에는 로그인한 email이 저장 됩니다.
     userinfo=User.objects.filter(email=userid).values('name','email')
     #로그인한 email 값들 중에서 name , email , project 값들을 가져 옵니다.
-    #129~134 -> render 함수에서 dict 형태를 요구해서 바꿔주는 코드 입니다.
-    userinfo_list = [entry for entry in userinfo] # userinfo를 list로 바꿔주는 코드    
-    userinfo_dict={}
-    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
-        for items in user :
-           value=user[items]
-           userinfo_dict[items]=value
+    userinfo_dict=convert_queryTodict(userinfo)
     return render(request, 'startPages/top_navi/profile.html',userinfo_dict)  
 def create_project(request):
     request.session['member_count'] = 0
@@ -267,24 +312,16 @@ def wiki(request):
     
     return render(request, 'startPages/left_navi/wiki.html')    
 def team(request):
+    userid=request.session['userid']
     project_name=request.session['project_name']
     team_emails=Project.objects.filter(project_name=project_name).values('project_member')
-    #<QuerySet [{'project_member': 'email@email.com'}, >
-    team_names=[]
-    member_cnt=0
-    for email in team_emails:
-        for name in email :
-            temp=User.objects.filter(email=email[name]).values('name')
-            member_cnt+=1
-            temp_list= [entry for entry in temp]
-            temp_dict= {}
-            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
-                for name in temp :
-                    value=temp[name]
-                    temp_dict[name]=value
-                    team_names.append(temp_dict)
-    
-    return render(request, 'startPages/left_navi/team.html',{'member_cnt':member_cnt,'team_names':team_names})    
+    admin_check=Project.objects.filter(project_name=project_name,project_leader=userid).exists()
+    member_cnt=Pjmember_count(project_name)
+    team_names=get_nameBYemail(project_name)
+    return render(request, 'startPages/left_navi/team.html',{'member_cnt':member_cnt,'team_names':team_names,'admin_check':admin_check})   
+
+def manage_team(request):
+    return render(request, 'startPages/manage_team.html') 
 def popup_invite_team(request):
     count=request.session['member_count']
     member=request.POST.get('project_member',None)
@@ -325,45 +362,6 @@ def Signup(request) :
     userdatas=User.objects.all()
     userdatas={'userdatas':userdatas}
     return render(request,'startPages/index.html',userdatas)
-def get_lastProject(userid,last_projectname):
-    member_cnt=0
-    context=Project.objects.filter(project_name=last_projectname).values('project_member','project_name')
-    context_list = [entry for entry in context] # userinfo를 list로 바꿔주는 코드    
-    context_dict={}
-    for user in context_list:#list를 dict로 바꿔주는 for문 입니다. 
-        for items in user :
-           value=user[items]
-           context_dict[items]=value
-    project_week=1
-    for i in range(10):
-        isvaild=Brainstorm.objects.filter(project_name=last_projectname,project_week=i+1).exists()
-        if isvaild is True : pass
-        else : 
-            project_week=i
-            break
-    week_list=[]
-    for i in range(project_week):
-        week_list.append(i+1)    
-
-    project_emails=Project.objects.filter(project_name=last_projectname).values('project_member')
-    members_name=[]
-    for email in project_emails:
-        for name in email :
-            temp=User.objects.filter(email=email[name]).values('name')
-            member_cnt+=1
-            temp_list= [entry for entry in temp]
-            temp_dict= {}
-            for temp in temp_list:#list를 dict로 바꿔주는 for문 입니다. 
-                for name in temp :
-                    value=temp[name]
-                    temp_dict[name]=value
-                    members_name.append(temp_dict)
-    project_names=Project.objects.filter(project_member=userid).values('project_name')
-    context_dict['projects']=project_names
-    context_dict['week_list']=week_list
-    context_dict['members_name']=members_name
-    context_dict['member_cnt']=member_cnt
-    return context_dict
 
 
 def Signin(request):
@@ -387,9 +385,7 @@ def Signin(request):
                 last_pjname=User.objects.filter(email=input_email).values('Lastproject')
             except : 
                 last_pjname=None
-            print(last_pjname)
             context=get_lastProject(input_email,last_pjname)
-            print(context)
             return render(request,'startPages/top_navi/homepage.html',context)
         
         elif check_password is False : # email 은 일치, password는 불일치
@@ -612,12 +608,7 @@ def weekend_report(request):
     #create_user
     userid=request.session['userid']
     userinfo=User.objects.filter(email=userid).values('name')
-    userinfo_list = [entry for entry in userinfo]  
-    userinfo_dict={}
-    for user in userinfo_list:#list를 dict로 바꿔주는 for문 입니다. 
-        for items in user :
-           value=user[items]
-           userinfo_dict[items]=value
+    userinfo_dict=convert_queryTodict(userinfo)
     create_user = userinfo_dict["name"]
     #chart함수
     chart(project_name=project_name, create_user = create_user)

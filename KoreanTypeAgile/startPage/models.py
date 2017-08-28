@@ -8,6 +8,7 @@ class User(models.Model):
     email = models.CharField(max_length=40)
     password = models.CharField(max_length=40, default=' ')
     Lastproject= models.CharField(max_length=40, default='')
+    
 
     def __str__(self):
         return self.name
@@ -21,6 +22,7 @@ class Project(models.Model):
     project_contents = models.CharField(max_length=40, default='')
     project_Cycle=models.IntegerField(default=7,validators=[MaxValueValidator(10), MinValueValidator(5)])
     project_start_time = models.DateTimeField(auto_now=True)
+    project_role=models.CharField(max_length=40,default='')
     def __str__(self):
         return self.project_name
 
