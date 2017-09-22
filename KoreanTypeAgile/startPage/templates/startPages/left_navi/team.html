@@ -1,16 +1,6 @@
 {% extends "logged_in_page_base.html" %}
 {% load staticfiles %}
 {% block content %}
-	
-	<script>
-        function popup(){
-            var popurl="popup_invite_team.html";
-            var popOption = "width=640, height=10, resizable=no, scrollbars=no, status=no;";
-            window.name="pwin";
-            window.open(popurl,"",popOption);
-            return false;
-        }
-    </script>
 	<section class="team-main-layout" style="background: rgb(230, 232, 236); border: 1px solid gray;">
 		<!-- 두 섹션 공통 부분-->
 		<div class="team-sub-layout">
@@ -27,16 +17,17 @@
 								<a class="team-menu" href="#">초대 중인 멤버</a>
 							</div>
 						</span>
-
+						
 						<div class="team-menu-space"></div>
-
-						<button onclick="return popup()" type="button" tabindex="-1" class="team-member-plus-button orange"
-						data-toggle="modal" data-target="teamPlus">
-							<div>
-								<i class="team-plus-icon"></i>
-								<span class="team-plus-button-text">팀원 초대하기</span>
-							</div>
-						</button>
+						{% if admin_check is True %}
+							<button onclick=location.href="../manage_team.html" type="button" tabindex="-1" class="team-member-plus-button orange"
+							data-toggle="modal" data-target="teamPlus">
+								<div>
+									<i class="team-plus-icon"></i>
+									<a href="../manage_team.html" span class="team-plus-button-text">팀원 관리하기</a>
+								</div>
+							</button>
+						{% endif %}
 					</section>
 				</div>
 			</div>
